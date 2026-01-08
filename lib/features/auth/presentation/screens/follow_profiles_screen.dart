@@ -1,0 +1,268 @@
+import 'package:flutter/material.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/constants/app_strings.dart';
+import '../../../../core/widgets/atoms/custom_back_button.dart';
+import '../../../../core/widgets/atoms/primary_button.dart';
+import '../../../home/presentation/screens/home_screen.dart';
+
+class FollowProfilesScreen extends StatefulWidget {
+  final String phoneNumber;
+  final String name;
+  final String birthDate;
+
+  const FollowProfilesScreen({
+    super.key,
+    required this.phoneNumber,
+    required this.name,
+    required this.birthDate,
+  });
+
+  @override
+  State<FollowProfilesScreen> createState() => _FollowProfilesScreenState();
+}
+
+class _FollowProfilesScreenState extends State<FollowProfilesScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  final Set<int> _followingIds = {};
+
+  // Lista de perfiles sugeridos
+  final List<Map<String, dynamic>> _profiles = [
+    {
+      'id': 1,
+      'name': 'Jane Cooper',
+      'location': 'La Paz',
+      'image': 'assets/images/profiles/chica1.jpg',
+    },
+    {
+      'id': 2,
+      'name': 'Jenny Rivero',
+      'location': 'Cochabamba',
+      'image': 'assets/images/profiles/chica2.jpg',
+    },
+    {
+      'id': 3,
+      'name': 'Camila Ovando',
+      'location': 'Oruro',
+      'image': 'assets/images/profiles/chica3.jpg',
+    },
+    {
+      'id': 4,
+      'name': 'Vania Paz',
+      'location': 'Beni',
+      'image': 'assets/images/profiles/chica4.jpg',
+    },
+    {
+      'id': 5,
+      'name': 'Isabel Campo',
+      'location': 'Tarija',
+      'image': 'assets/images/profiles/chica5.jpg',
+    },
+    {
+      'id': 6,
+      'name': 'Ana Cardoz',
+      'location': 'La Paz',
+      'image': 'assets/images/profiles/chica1.jpg',
+    },
+  ];
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _toggleFollow(int id) {
+    setState(() {
+      if (_followingIds.contains(id)) {
+        _followingIds.remove(id);
+      } else {
+        _followingIds.add(id);
+      }
+    });
+  }
+
+  void _handleContinue() {
+    // Navegar a la pantalla de inicio
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => const HomeScreen()),
+      (route) => false, // Elimina todas las rutas anteriores
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.white,
+      appBar: AppBar(
+        leading: CustomBackButton(
+          color: AppColors.textSecondary,
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 16),
+            
+            // Título
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24.0),
+              child: Text(
+                'Seguir perfil',
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+            ),
+            
+            const SizedBox(height: 8),
+            
+            // Subtítulo
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24.0),
+              child: Text(
+                'Sigue a alguien que quieras conocerte o\npuedas saltar esta parte.',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: AppColors.textSecondary,
+                  height: 1.5,
+                ),
+              ),
+            ),
+            
+            const SizedBox(height: 24),
+            
+            // Barra de búsqueda
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  hintText: 'Buscar...',
+                  hintStyle: const TextStyle(color: AppColors.textHint),
+                  prefixIcon: const Icon(Icons.search, color: AppColors.textHint),
+                  filled: true,
+                  fillColor: AppColors.background,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
+                ),
+              ),
+            ),
+            
+            const SizedBox(height: 24),
+            
+            // Lista de perfiles
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                itemCount: _profiles.length,
+                itemBuilder: (context, index) {
+                  final profile = _profiles[index];
+                  final isFollowing = _followingIds.contains(profile['id']);
+                  
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 16.0),
+                    child: Row(
+                      children: [
+                        // Avatar
+                        CircleAvatar(
+                          radius: 28,
+                          backgroundColor: AppColors.background,
+                          backgroundImage: AssetImage(profile['image']),
+                        ),
+                        
+                        const SizedBox(width: 12),
+                        
+                        // Nombre y ubicación
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                profile['name'],
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.textPrimary,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Row(
+                                children: [
+                                  const Icon(
+                                    Icons.location_on,
+                                    size: 14,
+                                    color: AppColors.textSecondary,
+                                  ),
+                                  const SizedBox(width: 2),
+                                  Text(
+                                    profile['location'],
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      color: AppColors.textSecondary,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        
+                        // Botón Seguir/Siguiendo
+                        OutlinedButton(
+                          onPressed: () => _toggleFollow(profile['id']),
+                          style: OutlinedButton.styleFrom(
+                            backgroundColor: isFollowing ? Colors.transparent : AppColors.primary,
+                            foregroundColor: isFollowing ? AppColors.primary : AppColors.white,
+                            side: BorderSide(
+                              color: AppColors.primary,
+                              width: isFollowing ? 1.5 : 0,
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 8,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          ),
+                          child: Text(
+                            isFollowing ? 'Siguiendo' : 'Seguir',
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+            
+            // Botón Continuar
+            Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: PrimaryButton(
+                text: AppStrings.continueButton,
+                onPressed: _handleContinue,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
