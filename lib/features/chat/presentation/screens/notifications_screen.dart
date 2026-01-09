@@ -27,11 +27,7 @@ class NotificationsScreen extends StatelessWidget {
                 children: [
                   Row(
                     children: const [
-                      Icon(
-                        Icons.notifications,
-                        color: Colors.white,
-                        size: 24,
-                      ),
+                      Icon(Icons.notifications, color: Colors.white, size: 24),
                       SizedBox(width: 12),
                       Text(
                         'Notificaciones',
@@ -44,7 +40,10 @@ class NotificationsScreen extends StatelessWidget {
                     ],
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: const Color(0xFFE991C5),
                       borderRadius: BorderRadius.circular(12),
@@ -152,11 +151,7 @@ class NotificationsScreen extends StatelessWidget {
                         color: Colors.white,
                         shape: BoxShape.circle,
                       ),
-                      child: Icon(
-                        icon,
-                        size: 16,
-                        color: iconColor,
-                      ),
+                      child: Icon(icon, size: 16, color: iconColor),
                     ),
                   ),
                 ],
@@ -177,9 +172,7 @@ class NotificationsScreen extends StatelessWidget {
                         children: [
                           TextSpan(
                             text: name,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                           TextSpan(
                             text: ' $action',
@@ -209,19 +202,12 @@ class NotificationsScreen extends StatelessWidget {
             const SizedBox(height: 12),
             Row(
               children: [
-                Icon(
-                  Icons.credit_card,
-                  size: 16,
-                  color: Colors.grey[600],
-                ),
+                Icon(Icons.credit_card, size: 16, color: Colors.grey[600]),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     description,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                    ),
+                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                   ),
                 ),
               ],
@@ -229,7 +215,9 @@ class NotificationsScreen extends StatelessWidget {
           ],
 
           // Información de cita (si fue aceptada)
-          if (isAccepted && appointmentDate != null && appointmentTime != null) ...[
+          if (isAccepted &&
+              appointmentDate != null &&
+              appointmentTime != null) ...[
             const SizedBox(height: 12),
             Container(
               padding: const EdgeInsets.all(12),
@@ -291,20 +279,15 @@ class NotificationsScreen extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => VideoCallScreen(
-                        name: name,
-                        avatar: avatar,
-                      ),
+                      builder: (context) =>
+                          VideoCallScreen(name: name, avatar: avatar),
                     ),
                   );
                 },
                 icon: const Icon(Icons.videocam, size: 18),
                 label: const Text(
                   'Entrar a videollamada',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFE991C5),

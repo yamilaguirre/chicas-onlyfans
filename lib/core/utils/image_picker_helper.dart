@@ -4,7 +4,7 @@ import 'package:image_picker/image_picker.dart';
 
 class ImagePickerHelper {
   static final ImagePicker _picker = ImagePicker();
-  
+
   // Seleccionar imagen de la galería
   static Future<Uint8List?> pickImageFromGallery() async {
     try {
@@ -14,7 +14,7 @@ class ImagePickerHelper {
         maxHeight: 800,
         imageQuality: 85,
       );
-      
+
       if (image != null) {
         return await image.readAsBytes();
       }
@@ -24,7 +24,7 @@ class ImagePickerHelper {
       return null;
     }
   }
-  
+
   // Tomar foto con la cámara
   static Future<Uint8List?> pickImageFromCamera() async {
     try {
@@ -34,7 +34,7 @@ class ImagePickerHelper {
         maxHeight: 800,
         imageQuality: 85,
       );
-      
+
       if (image != null) {
         return await image.readAsBytes();
       }
@@ -44,7 +44,7 @@ class ImagePickerHelper {
       return null;
     }
   }
-  
+
   // Mostrar diálogo para elegir fuente
   static Future<Uint8List?> showImageSourceDialog(BuildContext context) async {
     return showDialog<Uint8List>(

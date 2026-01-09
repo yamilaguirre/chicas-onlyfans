@@ -42,18 +42,9 @@ class _PackagesScreenState extends State<PackagesScreen> {
 
   // Paquetes Básicos
   final List<Map<String, dynamic>> _basicPackages = [
-    {
-      'minutes': 5,
-      'price': 7,
-    },
-    {
-      'minutes': 10,
-      'price': 9,
-    },
-    {
-      'minutes': 15,
-      'price': 12,
-    },
+    {'minutes': 5, 'price': 7},
+    {'minutes': 10, 'price': 9},
+    {'minutes': 15, 'price': 12},
   ];
 
   void _showPaymentModal(Map<String, dynamic> package) {
@@ -70,7 +61,8 @@ class _PackagesScreenState extends State<PackagesScreen> {
           // Validar formulario
           void validateForm() {
             setState(() {
-              isFormValid = cardNumberController.text.length >= 16 &&
+              isFormValid =
+                  cardNumberController.text.length >= 16 &&
                   expiryController.text.length == 5 &&
                   cvvController.text.length == 3;
             });
@@ -117,7 +109,10 @@ class _PackagesScreenState extends State<PackagesScreen> {
                           ),
                           IconButton(
                             onPressed: () => Navigator.pop(context),
-                            icon: const Icon(Icons.close, color: AppColors.textSecondary),
+                            icon: const Icon(
+                              Icons.close,
+                              color: AppColors.textSecondary,
+                            ),
                             padding: EdgeInsets.zero,
                             constraints: const BoxConstraints(),
                           ),
@@ -135,7 +130,10 @@ class _PackagesScreenState extends State<PackagesScreen> {
                         ),
                         child: Row(
                           children: [
-                            const Icon(Icons.credit_card, color: AppColors.textSecondary),
+                            const Icon(
+                              Icons.credit_card,
+                              color: AppColors.textSecondary,
+                            ),
                             const SizedBox(width: 12),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -191,7 +189,9 @@ class _PackagesScreenState extends State<PackagesScreen> {
                           if (result != value) {
                             cardNumberController.value = TextEditingValue(
                               text: result,
-                              selection: TextSelection.collapsed(offset: result.length),
+                              selection: TextSelection.collapsed(
+                                offset: result.length,
+                              ),
                             );
                           }
                           validateForm();
@@ -241,7 +241,9 @@ class _PackagesScreenState extends State<PackagesScreen> {
                                   },
                                   decoration: InputDecoration(
                                     hintText: 'MM/AA',
-                                    hintStyle: const TextStyle(color: AppColors.textHint),
+                                    hintStyle: const TextStyle(
+                                      color: AppColors.textHint,
+                                    ),
                                     filled: true,
                                     fillColor: AppColors.background,
                                     border: OutlineInputBorder(
@@ -280,7 +282,9 @@ class _PackagesScreenState extends State<PackagesScreen> {
                                   onChanged: (value) => validateForm(),
                                   decoration: InputDecoration(
                                     hintText: '123',
-                                    hintStyle: const TextStyle(color: AppColors.textHint),
+                                    hintStyle: const TextStyle(
+                                      color: AppColors.textHint,
+                                    ),
                                     filled: true,
                                     fillColor: AppColors.background,
                                     border: OutlineInputBorder(
@@ -336,7 +340,8 @@ class _PackagesScreenState extends State<PackagesScreen> {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text(
-                                          '¡Compra confirmada! ${package['minutes']} minutos agregados'),
+                                        '¡Compra confirmada! ${package['minutes']} minutos agregados',
+                                      ),
                                       backgroundColor: AppColors.success,
                                     ),
                                   );
@@ -358,7 +363,9 @@ class _PackagesScreenState extends State<PackagesScreen> {
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: isFormValid ? Colors.white : Colors.grey[500],
+                              color: isFormValid
+                                  ? Colors.white
+                                  : Colors.grey[500],
                             ),
                           ),
                         ),
@@ -437,10 +444,12 @@ class _PackagesScreenState extends State<PackagesScreen> {
                       const SizedBox(height: 16),
 
                       // Tarjetas Premium
-                      ..._premiumPackages.map((package) => Padding(
-                            padding: const EdgeInsets.only(bottom: 16),
-                            child: _buildPremiumCard(package),
-                          )),
+                      ..._premiumPackages.map(
+                        (package) => Padding(
+                          padding: const EdgeInsets.only(bottom: 16),
+                          child: _buildPremiumCard(package),
+                        ),
+                      ),
 
                       const SizedBox(height: 24),
 
@@ -461,14 +470,18 @@ class _PackagesScreenState extends State<PackagesScreen> {
                         children: _basicPackages.map((package) {
                           return Expanded(
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 4),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 4,
+                              ),
                               child: _buildBasicCard(package),
                             ),
                           );
                         }).toList(),
                       ),
 
-                      const SizedBox(height: 100), // Espacio para el menú inferior
+                      const SizedBox(
+                        height: 100,
+                      ), // Espacio para el menú inferior
                     ],
                   ),
                 ),
@@ -489,10 +502,7 @@ class _PackagesScreenState extends State<PackagesScreen> {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              package['color'],
-              package['color'].withOpacity(0.8),
-            ],
+            colors: [package['color'], package['color'].withOpacity(0.8)],
           ),
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
@@ -513,7 +523,10 @@ class _PackagesScreenState extends State<PackagesScreen> {
                 children: [
                   // Badge
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.3),
                       borderRadius: BorderRadius.circular(12),
@@ -535,11 +548,7 @@ class _PackagesScreenState extends State<PackagesScreen> {
                       color: Colors.white.withOpacity(0.2),
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(
-                      package['icon'],
-                      color: Colors.white,
-                      size: 28,
-                    ),
+                    child: Icon(package['icon'], color: Colors.white, size: 28),
                   ),
                 ],
               ),
@@ -584,10 +593,7 @@ class _PackagesScreenState extends State<PackagesScreen> {
                 children: [
                   const Text(
                     'minutos',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                    ),
+                    style: TextStyle(color: Colors.white, fontSize: 16),
                   ),
                 ],
               ),
@@ -597,7 +603,10 @@ class _PackagesScreenState extends State<PackagesScreen> {
               // Botón Comprar centrado
               Center(
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32,
+                    vertical: 12,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(25),
@@ -624,10 +633,7 @@ class _PackagesScreenState extends State<PackagesScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Colors.grey.withOpacity(0.2),
-          width: 1,
-        ),
+        border: Border.all(color: Colors.grey.withOpacity(0.2), width: 1),
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.1),
@@ -667,10 +673,7 @@ class _PackagesScreenState extends State<PackagesScreen> {
             ),
             const Text(
               'minutos',
-              style: TextStyle(
-                color: AppColors.textSecondary,
-                fontSize: 11,
-              ),
+              style: TextStyle(color: AppColors.textSecondary, fontSize: 11),
             ),
 
             const SizedBox(height: 12),
@@ -698,17 +701,17 @@ class _PackagesScreenState extends State<PackagesScreen> {
               style: OutlinedButton.styleFrom(
                 foregroundColor: const Color(0xFFE991C5),
                 side: const BorderSide(color: Color(0xFFE991C5)),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 6,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),
               ),
               child: const Text(
                 'Comprar',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
               ),
             ),
           ],
@@ -775,14 +778,12 @@ class _PackagesScreenState extends State<PackagesScreen> {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.white.withOpacity(0.2) : Colors.transparent,
+          color: isSelected
+              ? Colors.white.withOpacity(0.2)
+              : Colors.transparent,
           shape: BoxShape.circle,
         ),
-        child: Icon(
-          icon,
-          color: Colors.white,
-          size: 28,
-        ),
+        child: Icon(icon, color: Colors.white, size: 28),
       ),
     );
   }

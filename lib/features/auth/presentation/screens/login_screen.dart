@@ -29,9 +29,9 @@ class LoginScreen extends StatelessWidget {
                 ),
               ),
             ),
-            
+
             const Spacer(),
-            
+
             // Título
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 32.0),
@@ -44,9 +44,9 @@ class LoginScreen extends StatelessWidget {
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 32),
-            
+
             // Botones de login
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 32.0),
@@ -66,9 +66,9 @@ class LoginScreen extends StatelessWidget {
                     backgroundColor: AppColors.textWhite,
                     textColor: AppColors.textPrimary,
                   ),
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   SocialButton(
                     text: AppStrings.signInWithApple,
                     icon: Icons.apple,
@@ -83,9 +83,9 @@ class LoginScreen extends StatelessWidget {
                     backgroundColor: AppColors.textWhite,
                     textColor: AppColors.textPrimary,
                   ),
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   SocialButton(
                     text: 'Continuar con celular',
                     icon: Icons.phone_android,
@@ -100,9 +100,9 @@ class LoginScreen extends StatelessWidget {
                     backgroundColor: AppColors.textWhite,
                     textColor: AppColors.textPrimary,
                   ),
-                  
+
                   const SizedBox(height: 24),
-                  
+
                   // Link de registro
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -139,7 +139,7 @@ class LoginScreen extends StatelessWidget {
                 ],
               ),
             ),
-            
+
             const SizedBox(height: 48),
           ],
         ),

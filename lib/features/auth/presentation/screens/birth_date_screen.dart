@@ -10,7 +10,7 @@ import 'profile_confirmation_screen.dart';
 class BirthDateScreen extends StatefulWidget {
   final String phoneNumber;
   final String name;
-  
+
   const BirthDateScreen({
     super.key,
     required this.phoneNumber,
@@ -25,6 +25,7 @@ class _BirthDateScreenState extends State<BirthDateScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _dateController = TextEditingController();
   bool _isButtonEnabled = false;
+  DateTime? _selectedDate;
 
   @override
   void initState() {
@@ -48,14 +49,14 @@ class _BirthDateScreenState extends State<BirthDateScreen> {
     // Auto-formatear la fecha mientras se escribe
     String cleaned = value.replaceAll('/', '');
     String formatted = '';
-    
+
     for (int i = 0; i < cleaned.length && i < 8; i++) {
       if (i == 4 || i == 6) {
         formatted += '/';
       }
       formatted += cleaned[i];
     }
-    
+
     if (formatted != value) {
       _dateController.value = TextEditingValue(
         text: formatted,
@@ -66,13 +67,23 @@ class _BirthDateScreenState extends State<BirthDateScreen> {
 
   void _handleContinue() {
     if (_formKey.currentState!.validate()) {
+      // Parsear la fecha del formato YYYY/MM/DD
+      final parts = _dateController.text.split('/');
+      if (parts.length == 3) {
+        _selectedDate = DateTime(
+          int.parse(parts[0]), // año
+          int.parse(parts[1]), // mes
+          int.parse(parts[2]), // día
+        );
+      }
+
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => ProfileConfirmationScreen(
             phoneNumber: widget.phoneNumber,
             name: widget.name,
-            birthDate: _dateController.text,
+            birthDate: _selectedDate!,
           ),
         ),
       );
@@ -84,9 +95,7 @@ class _BirthDateScreenState extends State<BirthDateScreen> {
     return Scaffold(
       backgroundColor: AppColors.textWhite,
       appBar: AppBar(
-        leading: CustomBackButton(
-          color: AppColors.textSecondary,
-        ),
+        leading: CustomBackButton(color: AppColors.textSecondary),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
@@ -106,16 +115,18 @@ class _BirthDateScreenState extends State<BirthDateScreen> {
                         height: 4,
                         margin: const EdgeInsets.symmetric(horizontal: 2),
                         decoration: BoxDecoration(
-                          color: index < 3 ? AppColors.primary : AppColors.textHint,
+                          color: index < 3
+                              ? AppColors.primary
+                              : AppColors.textHint,
                           borderRadius: BorderRadius.circular(2),
                         ),
                       ),
                     );
                   }),
                 ),
-                
+
                 const SizedBox(height: 32),
-                
+
                 // Título
                 const Text(
                   AppStrings.birthDateTitle,
@@ -125,9 +136,9 @@ class _BirthDateScreenState extends State<BirthDateScreen> {
                     color: AppColors.textPrimary,
                   ),
                 ),
-                
+
                 const SizedBox(height: 32),
-                
+
                 // Campo de fecha con validación
                 TextFormField(
                   controller: _dateController,
@@ -153,9 +164,9 @@ class _BirthDateScreenState extends State<BirthDateScreen> {
                     _validateForm();
                   },
                 ),
-                
+
                 const SizedBox(height: 8),
-                
+
                 // Hint
                 Text(
                   AppStrings.birthDateHint,
@@ -164,17 +175,15 @@ class _BirthDateScreenState extends State<BirthDateScreen> {
                     color: AppColors.textSecondary,
                   ),
                 ),
-                
+
                 const Spacer(),
-                
+
                 // Botón continuar
                 PrimaryButton(
                   text: AppStrings.continueButton,
                   onPressed: _isButtonEnabled ? _handleContinue : null,
-                  
-  
                 ),
-                
+
                 const SizedBox(height: 48),
               ],
             ),

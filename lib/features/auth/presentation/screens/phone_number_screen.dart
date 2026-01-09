@@ -15,7 +15,9 @@ class PhoneNumberScreen extends StatefulWidget {
 
 class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _countryController = TextEditingController(text: 'BOL');
+  final TextEditingController _countryController = TextEditingController(
+    text: 'BOL',
+  );
   final TextEditingController _phoneController = TextEditingController();
   bool _isButtonEnabled = false;
 
@@ -47,7 +49,7 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
           backgroundColor: AppColors.success,
         ),
       );
-      
+
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -64,9 +66,7 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
     return Scaffold(
       backgroundColor: AppColors.textWhite,
       appBar: AppBar(
-        leading: CustomBackButton(
-          color: AppColors.textSecondary,
-        ),
+        leading: CustomBackButton(color: AppColors.textSecondary),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
@@ -79,7 +79,7 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 32),
-                
+
                 // Título
                 const Text(
                   AppStrings.phoneTitle,
@@ -89,18 +89,18 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
                     color: AppColors.textPrimary,
                   ),
                 ),
-                
+
                 const SizedBox(height: 32),
-                
+
                 // Campo de teléfono con validación
                 PhoneInputField(
                   countryController: _countryController,
                   phoneController: _phoneController,
                   onPhoneChanged: (value) => _validateForm(),
                 ),
-                
+
                 const SizedBox(height: 16),
-                
+
                 // Mensaje
                 Text(
                   AppStrings.codeMessage,
@@ -110,15 +110,15 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
                     height: 1.5,
                   ),
                 ),
-                
+
                 const Spacer(),
-                
+
                 // Botón continuar
                 PrimaryButton(
                   text: AppStrings.continueButton,
                   onPressed: _isButtonEnabled ? _handleContinue : null,
                 ),
-                
+
                 const SizedBox(height: 48),
               ],
             ),

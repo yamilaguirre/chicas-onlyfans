@@ -9,11 +9,8 @@ import 'name_screen.dart';
 
 class VerificationCodeScreen extends StatefulWidget {
   final String phoneNumber;
-  
-  const VerificationCodeScreen({
-    super.key,
-    required this.phoneNumber,
-  });
+
+  const VerificationCodeScreen({super.key, required this.phoneNumber});
 
   @override
   State<VerificationCodeScreen> createState() => _VerificationCodeScreenState();
@@ -51,7 +48,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
           backgroundColor: AppColors.success,
         ),
       );
-      
+
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -66,9 +63,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
     return Scaffold(
       backgroundColor: AppColors.textWhite,
       appBar: AppBar(
-        leading: CustomBackButton(
-          color: AppColors.textSecondary,
-        ),
+        leading: CustomBackButton(color: AppColors.textSecondary),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
@@ -81,7 +76,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 32),
-                
+
                 // Título
                 const Text(
                   AppStrings.codeTitle,
@@ -91,9 +86,9 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                     color: AppColors.textPrimary,
                   ),
                 ),
-                
+
                 const SizedBox(height: 16),
-                
+
                 // Mensaje con número de teléfono
                 Text(
                   'Código enviado a ${widget.phoneNumber}',
@@ -102,9 +97,9 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                     color: AppColors.textSecondary,
                   ),
                 ),
-                
+
                 const SizedBox(height: 32),
-                
+
                 // Campo de código con indicadores
                 Column(
                   children: [
@@ -133,9 +128,9 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                       validator: Validators.validateCode,
                       onChanged: (value) => _validateForm(),
                     ),
-                    
+
                     const SizedBox(height: 16),
-                    
+
                     // Indicadores de progreso
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -144,8 +139,8 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                           width: 40,
                           height: 4,
                           decoration: BoxDecoration(
-                            color: index < _codeController.text.length 
-                                ? AppColors.primary 
+                            color: index < _codeController.text.length
+                                ? AppColors.primary
                                 : AppColors.textHint,
                             borderRadius: BorderRadius.circular(2),
                           ),
@@ -154,9 +149,9 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                     ),
                   ],
                 ),
-                
+
                 const SizedBox(height: 24),
-                
+
                 // Botón reenviar código
                 Center(
                   child: TextButton(
@@ -170,22 +165,19 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                     },
                     child: Text(
                       '¿No recibiste el código? Reenviar',
-                      style: TextStyle(
-                        color: AppColors.primary,
-                        fontSize: 14,
-                      ),
+                      style: TextStyle(color: AppColors.primary, fontSize: 14),
                     ),
                   ),
                 ),
-                
+
                 const Spacer(),
-                
+
                 // Botón continuar
                 PrimaryButton(
                   text: AppStrings.continueButton,
                   onPressed: _isButtonEnabled ? _handleContinue : null,
                 ),
-                
+
                 const SizedBox(height: 48),
               ],
             ),

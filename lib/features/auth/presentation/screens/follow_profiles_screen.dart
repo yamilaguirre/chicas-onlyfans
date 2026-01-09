@@ -95,9 +95,7 @@ class _FollowProfilesScreenState extends State<FollowProfilesScreen> {
     return Scaffold(
       backgroundColor: AppColors.white,
       appBar: AppBar(
-        leading: CustomBackButton(
-          color: AppColors.textSecondary,
-        ),
+        leading: CustomBackButton(color: AppColors.textSecondary),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
@@ -106,7 +104,7 @@ class _FollowProfilesScreenState extends State<FollowProfilesScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 16),
-            
+
             // Título
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 24.0),
@@ -119,9 +117,9 @@ class _FollowProfilesScreenState extends State<FollowProfilesScreen> {
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 8),
-            
+
             // Subtítulo
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 24.0),
@@ -134,9 +132,9 @@ class _FollowProfilesScreenState extends State<FollowProfilesScreen> {
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // Barra de búsqueda
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -145,7 +143,10 @@ class _FollowProfilesScreenState extends State<FollowProfilesScreen> {
                 decoration: InputDecoration(
                   hintText: 'Buscar...',
                   hintStyle: const TextStyle(color: AppColors.textHint),
-                  prefixIcon: const Icon(Icons.search, color: AppColors.textHint),
+                  prefixIcon: const Icon(
+                    Icons.search,
+                    color: AppColors.textHint,
+                  ),
                   filled: true,
                   fillColor: AppColors.background,
                   border: OutlineInputBorder(
@@ -159,9 +160,9 @@ class _FollowProfilesScreenState extends State<FollowProfilesScreen> {
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // Lista de perfiles
             Expanded(
               child: ListView.builder(
@@ -170,7 +171,7 @@ class _FollowProfilesScreenState extends State<FollowProfilesScreen> {
                 itemBuilder: (context, index) {
                   final profile = _profiles[index];
                   final isFollowing = _followingIds.contains(profile['id']);
-                  
+
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 16.0),
                     child: Row(
@@ -181,9 +182,9 @@ class _FollowProfilesScreenState extends State<FollowProfilesScreen> {
                           backgroundColor: AppColors.background,
                           backgroundImage: AssetImage(profile['image']),
                         ),
-                        
+
                         const SizedBox(width: 12),
-                        
+
                         // Nombre y ubicación
                         Expanded(
                           child: Column(
@@ -218,13 +219,17 @@ class _FollowProfilesScreenState extends State<FollowProfilesScreen> {
                             ],
                           ),
                         ),
-                        
+
                         // Botón Seguir/Siguiendo
                         OutlinedButton(
                           onPressed: () => _toggleFollow(profile['id']),
                           style: OutlinedButton.styleFrom(
-                            backgroundColor: isFollowing ? Colors.transparent : AppColors.primary,
-                            foregroundColor: isFollowing ? AppColors.primary : AppColors.white,
+                            backgroundColor: isFollowing
+                                ? Colors.transparent
+                                : AppColors.primary,
+                            foregroundColor: isFollowing
+                                ? AppColors.primary
+                                : AppColors.white,
                             side: BorderSide(
                               color: AppColors.primary,
                               width: isFollowing ? 1.5 : 0,
@@ -251,7 +256,7 @@ class _FollowProfilesScreenState extends State<FollowProfilesScreen> {
                 },
               ),
             ),
-            
+
             // Botón Continuar
             Padding(
               padding: const EdgeInsets.all(24.0),

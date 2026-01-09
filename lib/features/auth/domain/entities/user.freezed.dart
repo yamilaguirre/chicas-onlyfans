@@ -22,13 +22,19 @@ User _$UserFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$User {
   String get id => throw _privateConstructorUsedError;
-  String get name => throw _privateConstructorUsedError;
   String get phone => throw _privateConstructorUsedError;
+  String? get username => throw _privateConstructorUsedError;
+  String? get name => throw _privateConstructorUsedError;
   String? get email => throw _privateConstructorUsedError;
-  String? get profileImage => throw _privateConstructorUsedError;
-  DateTime get birthDate => throw _privateConstructorUsedError;
+  String? get profileImageUrl => throw _privateConstructorUsedError;
+  String? get bio => throw _privateConstructorUsedError;
+  DateTime? get birthDate => throw _privateConstructorUsedError;
   bool get isVerified => throw _privateConstructorUsedError;
   List<String> get interests => throw _privateConstructorUsedError;
+  List<String> get followers => throw _privateConstructorUsedError;
+  List<String> get following => throw _privateConstructorUsedError;
+  DateTime? get createdAt => throw _privateConstructorUsedError;
+  DateTime? get updatedAt => throw _privateConstructorUsedError;
 
   /// Serializes this User to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -46,13 +52,19 @@ abstract class $UserCopyWith<$Res> {
   @useResult
   $Res call({
     String id,
-    String name,
     String phone,
+    String? username,
+    String? name,
     String? email,
-    String? profileImage,
-    DateTime birthDate,
+    String? profileImageUrl,
+    String? bio,
+    DateTime? birthDate,
     bool isVerified,
     List<String> interests,
+    List<String> followers,
+    List<String> following,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   });
 }
 
@@ -72,13 +84,19 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
   @override
   $Res call({
     Object? id = null,
-    Object? name = null,
     Object? phone = null,
+    Object? username = freezed,
+    Object? name = freezed,
     Object? email = freezed,
-    Object? profileImage = freezed,
-    Object? birthDate = null,
+    Object? profileImageUrl = freezed,
+    Object? bio = freezed,
+    Object? birthDate = freezed,
     Object? isVerified = null,
     Object? interests = null,
+    Object? followers = null,
+    Object? following = null,
+    Object? createdAt = freezed,
+    Object? updatedAt = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -86,26 +104,34 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
                 ? _value.id
                 : id // ignore: cast_nullable_to_non_nullable
                       as String,
-            name: null == name
-                ? _value.name
-                : name // ignore: cast_nullable_to_non_nullable
-                      as String,
             phone: null == phone
                 ? _value.phone
                 : phone // ignore: cast_nullable_to_non_nullable
                       as String,
+            username: freezed == username
+                ? _value.username
+                : username // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            name: freezed == name
+                ? _value.name
+                : name // ignore: cast_nullable_to_non_nullable
+                      as String?,
             email: freezed == email
                 ? _value.email
                 : email // ignore: cast_nullable_to_non_nullable
                       as String?,
-            profileImage: freezed == profileImage
-                ? _value.profileImage
-                : profileImage // ignore: cast_nullable_to_non_nullable
+            profileImageUrl: freezed == profileImageUrl
+                ? _value.profileImageUrl
+                : profileImageUrl // ignore: cast_nullable_to_non_nullable
                       as String?,
-            birthDate: null == birthDate
+            bio: freezed == bio
+                ? _value.bio
+                : bio // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            birthDate: freezed == birthDate
                 ? _value.birthDate
                 : birthDate // ignore: cast_nullable_to_non_nullable
-                      as DateTime,
+                      as DateTime?,
             isVerified: null == isVerified
                 ? _value.isVerified
                 : isVerified // ignore: cast_nullable_to_non_nullable
@@ -114,6 +140,22 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
                 ? _value.interests
                 : interests // ignore: cast_nullable_to_non_nullable
                       as List<String>,
+            followers: null == followers
+                ? _value.followers
+                : followers // ignore: cast_nullable_to_non_nullable
+                      as List<String>,
+            following: null == following
+                ? _value.following
+                : following // ignore: cast_nullable_to_non_nullable
+                      as List<String>,
+            createdAt: freezed == createdAt
+                ? _value.createdAt
+                : createdAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            updatedAt: freezed == updatedAt
+                ? _value.updatedAt
+                : updatedAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
           )
           as $Val,
     );
@@ -130,13 +172,19 @@ abstract class _$$UserImplCopyWith<$Res> implements $UserCopyWith<$Res> {
   @useResult
   $Res call({
     String id,
-    String name,
     String phone,
+    String? username,
+    String? name,
     String? email,
-    String? profileImage,
-    DateTime birthDate,
+    String? profileImageUrl,
+    String? bio,
+    DateTime? birthDate,
     bool isVerified,
     List<String> interests,
+    List<String> followers,
+    List<String> following,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   });
 }
 
@@ -153,13 +201,19 @@ class __$$UserImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = null,
-    Object? name = null,
     Object? phone = null,
+    Object? username = freezed,
+    Object? name = freezed,
     Object? email = freezed,
-    Object? profileImage = freezed,
-    Object? birthDate = null,
+    Object? profileImageUrl = freezed,
+    Object? bio = freezed,
+    Object? birthDate = freezed,
     Object? isVerified = null,
     Object? interests = null,
+    Object? followers = null,
+    Object? following = null,
+    Object? createdAt = freezed,
+    Object? updatedAt = freezed,
   }) {
     return _then(
       _$UserImpl(
@@ -167,26 +221,34 @@ class __$$UserImplCopyWithImpl<$Res>
             ? _value.id
             : id // ignore: cast_nullable_to_non_nullable
                   as String,
-        name: null == name
-            ? _value.name
-            : name // ignore: cast_nullable_to_non_nullable
-                  as String,
         phone: null == phone
             ? _value.phone
             : phone // ignore: cast_nullable_to_non_nullable
                   as String,
+        username: freezed == username
+            ? _value.username
+            : username // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        name: freezed == name
+            ? _value.name
+            : name // ignore: cast_nullable_to_non_nullable
+                  as String?,
         email: freezed == email
             ? _value.email
             : email // ignore: cast_nullable_to_non_nullable
                   as String?,
-        profileImage: freezed == profileImage
-            ? _value.profileImage
-            : profileImage // ignore: cast_nullable_to_non_nullable
+        profileImageUrl: freezed == profileImageUrl
+            ? _value.profileImageUrl
+            : profileImageUrl // ignore: cast_nullable_to_non_nullable
                   as String?,
-        birthDate: null == birthDate
+        bio: freezed == bio
+            ? _value.bio
+            : bio // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        birthDate: freezed == birthDate
             ? _value.birthDate
             : birthDate // ignore: cast_nullable_to_non_nullable
-                  as DateTime,
+                  as DateTime?,
         isVerified: null == isVerified
             ? _value.isVerified
             : isVerified // ignore: cast_nullable_to_non_nullable
@@ -195,6 +257,22 @@ class __$$UserImplCopyWithImpl<$Res>
             ? _value._interests
             : interests // ignore: cast_nullable_to_non_nullable
                   as List<String>,
+        followers: null == followers
+            ? _value._followers
+            : followers // ignore: cast_nullable_to_non_nullable
+                  as List<String>,
+        following: null == following
+            ? _value._following
+            : following // ignore: cast_nullable_to_non_nullable
+                  as List<String>,
+        createdAt: freezed == createdAt
+            ? _value.createdAt
+            : createdAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        updatedAt: freezed == updatedAt
+            ? _value.updatedAt
+            : updatedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
       ),
     );
   }
@@ -205,14 +283,22 @@ class __$$UserImplCopyWithImpl<$Res>
 class _$UserImpl implements _User {
   const _$UserImpl({
     required this.id,
-    required this.name,
     required this.phone,
+    this.username,
+    this.name,
     this.email,
-    this.profileImage,
-    required this.birthDate,
+    this.profileImageUrl,
+    this.bio,
+    this.birthDate,
     this.isVerified = false,
     final List<String> interests = const [],
-  }) : _interests = interests;
+    final List<String> followers = const [],
+    final List<String> following = const [],
+    this.createdAt,
+    this.updatedAt,
+  }) : _interests = interests,
+       _followers = followers,
+       _following = following;
 
   factory _$UserImpl.fromJson(Map<String, dynamic> json) =>
       _$$UserImplFromJson(json);
@@ -220,15 +306,19 @@ class _$UserImpl implements _User {
   @override
   final String id;
   @override
-  final String name;
-  @override
   final String phone;
+  @override
+  final String? username;
+  @override
+  final String? name;
   @override
   final String? email;
   @override
-  final String? profileImage;
+  final String? profileImageUrl;
   @override
-  final DateTime birthDate;
+  final String? bio;
+  @override
+  final DateTime? birthDate;
   @override
   @JsonKey()
   final bool isVerified;
@@ -241,9 +331,32 @@ class _$UserImpl implements _User {
     return EqualUnmodifiableListView(_interests);
   }
 
+  final List<String> _followers;
+  @override
+  @JsonKey()
+  List<String> get followers {
+    if (_followers is EqualUnmodifiableListView) return _followers;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_followers);
+  }
+
+  final List<String> _following;
+  @override
+  @JsonKey()
+  List<String> get following {
+    if (_following is EqualUnmodifiableListView) return _following;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_following);
+  }
+
+  @override
+  final DateTime? createdAt;
+  @override
+  final DateTime? updatedAt;
+
   @override
   String toString() {
-    return 'User(id: $id, name: $name, phone: $phone, email: $email, profileImage: $profileImage, birthDate: $birthDate, isVerified: $isVerified, interests: $interests)';
+    return 'User(id: $id, phone: $phone, username: $username, name: $name, email: $email, profileImageUrl: $profileImageUrl, bio: $bio, birthDate: $birthDate, isVerified: $isVerified, interests: $interests, followers: $followers, following: $following, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -252,11 +365,14 @@ class _$UserImpl implements _User {
         (other.runtimeType == runtimeType &&
             other is _$UserImpl &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(other.name, name) || other.name == name) &&
             (identical(other.phone, phone) || other.phone == phone) &&
+            (identical(other.username, username) ||
+                other.username == username) &&
+            (identical(other.name, name) || other.name == name) &&
             (identical(other.email, email) || other.email == email) &&
-            (identical(other.profileImage, profileImage) ||
-                other.profileImage == profileImage) &&
+            (identical(other.profileImageUrl, profileImageUrl) ||
+                other.profileImageUrl == profileImageUrl) &&
+            (identical(other.bio, bio) || other.bio == bio) &&
             (identical(other.birthDate, birthDate) ||
                 other.birthDate == birthDate) &&
             (identical(other.isVerified, isVerified) ||
@@ -264,7 +380,19 @@ class _$UserImpl implements _User {
             const DeepCollectionEquality().equals(
               other._interests,
               _interests,
-            ));
+            ) &&
+            const DeepCollectionEquality().equals(
+              other._followers,
+              _followers,
+            ) &&
+            const DeepCollectionEquality().equals(
+              other._following,
+              _following,
+            ) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt) &&
+            (identical(other.updatedAt, updatedAt) ||
+                other.updatedAt == updatedAt));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -272,13 +400,19 @@ class _$UserImpl implements _User {
   int get hashCode => Object.hash(
     runtimeType,
     id,
-    name,
     phone,
+    username,
+    name,
     email,
-    profileImage,
+    profileImageUrl,
+    bio,
     birthDate,
     isVerified,
     const DeepCollectionEquality().hash(_interests),
+    const DeepCollectionEquality().hash(_followers),
+    const DeepCollectionEquality().hash(_following),
+    createdAt,
+    updatedAt,
   );
 
   /// Create a copy of User
@@ -298,13 +432,19 @@ class _$UserImpl implements _User {
 abstract class _User implements User {
   const factory _User({
     required final String id,
-    required final String name,
     required final String phone,
+    final String? username,
+    final String? name,
     final String? email,
-    final String? profileImage,
-    required final DateTime birthDate,
+    final String? profileImageUrl,
+    final String? bio,
+    final DateTime? birthDate,
     final bool isVerified,
     final List<String> interests,
+    final List<String> followers,
+    final List<String> following,
+    final DateTime? createdAt,
+    final DateTime? updatedAt,
   }) = _$UserImpl;
 
   factory _User.fromJson(Map<String, dynamic> json) = _$UserImpl.fromJson;
@@ -312,19 +452,31 @@ abstract class _User implements User {
   @override
   String get id;
   @override
-  String get name;
-  @override
   String get phone;
+  @override
+  String? get username;
+  @override
+  String? get name;
   @override
   String? get email;
   @override
-  String? get profileImage;
+  String? get profileImageUrl;
   @override
-  DateTime get birthDate;
+  String? get bio;
+  @override
+  DateTime? get birthDate;
   @override
   bool get isVerified;
   @override
   List<String> get interests;
+  @override
+  List<String> get followers;
+  @override
+  List<String> get following;
+  @override
+  DateTime? get createdAt;
+  @override
+  DateTime? get updatedAt;
 
   /// Create a copy of User
   /// with the given fields replaced by the non-null parameter values.

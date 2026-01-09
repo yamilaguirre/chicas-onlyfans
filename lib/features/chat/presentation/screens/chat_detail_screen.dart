@@ -20,13 +20,9 @@ class ChatDetailScreen extends StatefulWidget {
 class _ChatDetailScreenState extends State<ChatDetailScreen> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  
+
   final List<Map<String, dynamic>> _messages = [
-    {
-      'text': 'Hola! Cómo estás? 👋',
-      'time': '10:30',
-      'isSent': false,
-    },
+    {'text': 'Hola! Cómo estás? 👋', 'time': '10:30', 'isSent': false},
     {
       'text': 'Hola! Todo bien, gracias por preguntar',
       'time': '10:31',
@@ -57,13 +53,14 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     setState(() {
       _messages.add({
         'text': _messageController.text,
-        'time': '${DateTime.now().hour}:${DateTime.now().minute.toString().padLeft(2, '0')}',
+        'time':
+            '${DateTime.now().hour}:${DateTime.now().minute.toString().padLeft(2, '0')}',
         'isSent': true,
       });
     });
 
     _messageController.clear();
-    
+
     // Scroll al final
     Future.delayed(const Duration(milliseconds: 100), () {
       _scrollController.animateTo(
@@ -231,7 +228,11 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                       shape: BoxShape.circle,
                     ),
                     child: IconButton(
-                      icon: const Icon(Icons.send, color: Colors.white, size: 20),
+                      icon: const Icon(
+                        Icons.send,
+                        color: Colors.white,
+                        size: 20,
+                      ),
                       onPressed: _sendMessage,
                     ),
                   ),
@@ -252,13 +253,17 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
-        mainAxisAlignment: isSent ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment: isSent
+            ? MainAxisAlignment.end
+            : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           if (isSent) const SizedBox(width: 60),
           Flexible(
             child: Column(
-              crossAxisAlignment: isSent ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+              crossAxisAlignment: isSent
+                  ? CrossAxisAlignment.end
+                  : CrossAxisAlignment.start,
               children: [
                 Container(
                   padding: const EdgeInsets.symmetric(
@@ -288,10 +293,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 4),
                   child: Text(
                     time,
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: Colors.grey[600],
-                    ),
+                    style: TextStyle(fontSize: 11, color: Colors.grey[600]),
                   ),
                 ),
               ],

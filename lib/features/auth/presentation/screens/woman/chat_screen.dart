@@ -23,7 +23,6 @@ class _ChatPageState extends State<ChatPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
               const SizedBox(height: 10),
               const Text(
                 "Chats",
@@ -103,7 +102,6 @@ class _ChatPageState extends State<ChatPage> {
                       mensaje: "Estoy esperando en la sala",
                       vip: true,
                       notificaciones: 2,
-
                     ),
                     _chatItem(
                       img: "assets/user5.jpg",
@@ -132,11 +130,11 @@ class _ChatPageState extends State<ChatPage> {
         width: 90,
         padding: const EdgeInsets.symmetric(vertical: 10),
         decoration: BoxDecoration(
-          color: isActive ? Colors.white.withValues(alpha: 0.2) : Colors.transparent,
+          color: isActive
+              ? Colors.white.withValues(alpha: 0.2)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: isActive ? Colors.white : Colors.white38,
-          ),
+          border: Border.all(color: isActive ? Colors.white : Colors.white38),
         ),
         alignment: Alignment.center,
         child: Text(
@@ -173,10 +171,7 @@ class _ChatPageState extends State<ChatPage> {
           // Avatar
           Stack(
             children: [
-              CircleAvatar(
-                radius: 28,
-                backgroundImage: AssetImage(img),
-              ),
+              CircleAvatar(radius: 28, backgroundImage: AssetImage(img)),
               if (online)
                 Positioned(
                   right: 2,
@@ -216,7 +211,7 @@ class _ChatPageState extends State<ChatPage> {
                       const Padding(
                         padding: EdgeInsets.only(left: 5),
                         child: Icon(Icons.star, color: Colors.yellow, size: 18),
-                      )
+                      ),
                   ],
                 ),
                 Text(
@@ -242,7 +237,7 @@ class _ChatPageState extends State<ChatPage> {
                 "$notificaciones",
                 style: const TextStyle(color: Colors.white, fontSize: 12),
               ),
-            )
+            ),
         ],
       ),
     );
@@ -261,21 +256,21 @@ class _ChatPageState extends State<ChatPage> {
         if (i == currentIndex) return;
         switch (i) {
           case 0:
-          //perfil
+            //perfil
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (_) => const ContnScreen()),
             );
             break;
           case 1:
-          //crear
+            //crear
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (_) => const CrearContenidoPage()),
             );
-            break; 
+            break;
           case 2:
-          //chat
+            //chat
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (_) => const ChatPage()),
@@ -285,8 +280,14 @@ class _ChatPageState extends State<ChatPage> {
       },
       items: const [
         BottomNavigationBarItem(icon: Icon(Icons.person), label: "ContScreen"),
-        BottomNavigationBarItem(icon: Icon(Icons.star), label: "ContenidoScreen"),
-        BottomNavigationBarItem(icon: Icon(Icons.chat_bubble), label: "MensajeríaScreen"),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.star),
+          label: "ContenidoScreen",
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.chat_bubble),
+          label: "MensajeríaScreen",
+        ),
       ],
     );
   }

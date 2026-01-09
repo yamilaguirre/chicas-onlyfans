@@ -18,7 +18,6 @@ class RankingDonadores extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
               // TÍTULO
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -89,9 +88,24 @@ class RankingDonadores extends StatelessWidget {
               const SizedBox(height: 20),
 
               // LISTA NORMAL
-              _itemNormal("Pedro_92", 120, "#4", "https://i.pravatar.cc/150?img=5"),
-              _itemNormal("Roberto_X", 95, "#5", "https://i.pravatar.cc/150?img=7"),
-              _itemNormal("Miguel_01", 75, "#6", "https://i.pravatar.cc/150?img=21"),
+              _itemNormal(
+                "Pedro_92",
+                120,
+                "#4",
+                "https://i.pravatar.cc/150?img=5",
+              ),
+              _itemNormal(
+                "Roberto_X",
+                95,
+                "#5",
+                "https://i.pravatar.cc/150?img=7",
+              ),
+              _itemNormal(
+                "Miguel_01",
+                75,
+                "#6",
+                "https://i.pravatar.cc/150?img=21",
+              ),
             ],
           ),
         ),
@@ -126,11 +140,14 @@ class RankingDonadores extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(name,
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15)),
+                  Text(
+                    name,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
+                  ),
                   const SizedBox(height: 4),
                   Row(
                     children: [
@@ -139,7 +156,9 @@ class RankingDonadores extends StatelessWidget {
                       Text(
                         puesto,
                         style: const TextStyle(
-                            color: Colors.white70, fontSize: 13),
+                          color: Colors.white70,
+                          fontSize: 13,
+                        ),
                       ),
                     ],
                   ),
@@ -162,10 +181,12 @@ class RankingDonadores extends StatelessWidget {
               child: Text(
                 botonTexto,
                 style: const TextStyle(
-                    fontWeight: FontWeight.bold, color: Colors.black),
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
               ),
             ),
-          )
+          ),
         ],
       ),
     );

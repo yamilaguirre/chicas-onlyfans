@@ -12,7 +12,8 @@ class ChatsScreen extends StatefulWidget {
   State<ChatsScreen> createState() => _ChatsScreenState();
 }
 
-class _ChatsScreenState extends State<ChatsScreen> with SingleTickerProviderStateMixin {
+class _ChatsScreenState extends State<ChatsScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final TextEditingController _searchController = TextEditingController();
 
@@ -154,8 +155,15 @@ class _ChatsScreenState extends State<ChatsScreen> with SingleTickerProviderStat
                 controller: _searchController,
                 decoration: InputDecoration(
                   hintText: 'Buscar conversaciones...',
-                  hintStyle: const TextStyle(color: AppColors.textHint, fontSize: 14),
-                  prefixIcon: const Icon(Icons.search, color: AppColors.textHint, size: 20),
+                  hintStyle: const TextStyle(
+                    color: AppColors.textHint,
+                    fontSize: 14,
+                  ),
+                  prefixIcon: const Icon(
+                    Icons.search,
+                    color: AppColors.textHint,
+                    size: 20,
+                  ),
                   filled: true,
                   fillColor: Colors.white,
                   enabledBorder: OutlineInputBorder(
@@ -164,7 +172,10 @@ class _ChatsScreenState extends State<ChatsScreen> with SingleTickerProviderStat
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(25),
-                    borderSide: const BorderSide(color: Color(0xFFE991C5), width: 1),
+                    borderSide: const BorderSide(
+                      color: Color(0xFFE991C5),
+                      width: 1,
+                    ),
                   ),
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 16,
@@ -219,7 +230,7 @@ class _ChatsScreenState extends State<ChatsScreen> with SingleTickerProviderStat
                       return _buildChatItem(chat);
                     },
                   ),
-                  
+
                   // Tab "Disponibles" - Grid de perfiles
                   ListView.builder(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -262,120 +273,117 @@ class _ChatsScreenState extends State<ChatsScreen> with SingleTickerProviderStat
           border: Border.all(color: Colors.grey[200]!, width: 1),
         ),
         child: Row(
-        children: [
-          // Avatar con indicador online
-          Stack(
-            children: [
-              CircleAvatar(
-                radius: 28,
-                backgroundImage: NetworkImage(chat['avatar']),
-              ),
-              if (chat['isOnline'])
-                Positioned(
-                  bottom: 0,
-                  right: 0,
-                  child: Container(
-                    width: 16,
-                    height: 16,
-                    decoration: BoxDecoration(
-                      color: Colors.green,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 2),
+          children: [
+            // Avatar con indicador online
+            Stack(
+              children: [
+                CircleAvatar(
+                  radius: 28,
+                  backgroundImage: NetworkImage(chat['avatar']),
+                ),
+                if (chat['isOnline'])
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: Container(
+                      width: 16,
+                      height: 16,
+                      decoration: BoxDecoration(
+                        color: Colors.green,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 2),
+                      ),
                     ),
                   ),
-                ),
-            ],
-          ),
-
-          const SizedBox(width: 12),
-
-          // Información del chat
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Nombre y estado
-                Row(
-                  children: [
-                    Text(
-                      chat['name'],
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                    if (chat['time'] == 'ACTIVA AHORA') ...[
-                      const SizedBox(width: 8),
-                      Text(
-                        chat['time'],
-                        style: const TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFFE991C5),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-
-                const SizedBox(height: 4),
-
-                // Mensaje y hora
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        chat['message'],
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: AppColors.textSecondary,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    if (chat['time'] != 'ACTIVA AHORA')
-                      Text(
-                        chat['time'],
-                        style: const TextStyle(
-                          fontSize: 11,
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                  ],
-                ),
               ],
             ),
-          ),
 
-          const SizedBox(width: 8),
+            const SizedBox(width: 12),
 
-          // Indicador de mensajes sin leer
-          if (chat['unreadCount'] > 0)
-            Container(
-              padding: const EdgeInsets.all(6),
-              decoration: const BoxDecoration(
-                color: Color(0xFFE991C5),
-                shape: BoxShape.circle,
-              ),
-              constraints: const BoxConstraints(
-                minWidth: 24,
-                minHeight: 24,
-              ),
-              child: Text(
-                '${chat['unreadCount']}',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
+            // Información del chat
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Nombre y estado
+                  Row(
+                    children: [
+                      Text(
+                        chat['name'],
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                      if (chat['time'] == 'ACTIVA AHORA') ...[
+                        const SizedBox(width: 8),
+                        Text(
+                          chat['time'],
+                          style: const TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFFE991C5),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+
+                  const SizedBox(height: 4),
+
+                  // Mensaje y hora
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          chat['message'],
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: AppColors.textSecondary,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      if (chat['time'] != 'ACTIVA AHORA')
+                        Text(
+                          chat['time'],
+                          style: const TextStyle(
+                            fontSize: 11,
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                    ],
+                  ),
+                ],
               ),
             ),
-        ],
-      ),
+
+            const SizedBox(width: 8),
+
+            // Indicador de mensajes sin leer
+            if (chat['unreadCount'] > 0)
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: const BoxDecoration(
+                  color: Color(0xFFE991C5),
+                  shape: BoxShape.circle,
+                ),
+                constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
+                child: Text(
+                  '${chat['unreadCount']}',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -420,7 +428,7 @@ class _ChatsScreenState extends State<ChatsScreen> with SingleTickerProviderStat
                         child: CircularProgressIndicator(
                           value: loadingProgress.expectedTotalBytes != null
                               ? loadingProgress.cumulativeBytesLoaded /
-                                  loadingProgress.expectedTotalBytes!
+                                    loadingProgress.expectedTotalBytes!
                               : null,
                           color: const Color(0xFFE991C5),
                         ),
@@ -446,7 +454,10 @@ class _ChatsScreenState extends State<ChatsScreen> with SingleTickerProviderStat
                 top: 12,
                 left: 12,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: profile['badgeColor'],
                     borderRadius: BorderRadius.circular(20),
@@ -467,7 +478,10 @@ class _ChatsScreenState extends State<ChatsScreen> with SingleTickerProviderStat
                   top: 12,
                   right: 12,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: const Color(0xFFE991C5),
                       borderRadius: BorderRadius.circular(20),
@@ -574,7 +588,11 @@ class _ChatsScreenState extends State<ChatsScreen> with SingleTickerProviderStat
               _buildNavButton(Icons.add_circle_outline, 0, false),
               _buildNavButton(Icons.grid_view, 1, false),
               _buildNavButton(Icons.store, 2, false),
-              _buildNavButton(Icons.chat_bubble_outline, 3, true), // Seleccionado
+              _buildNavButton(
+                Icons.chat_bubble_outline,
+                3,
+                true,
+              ), // Seleccionado
               _buildNavButton(Icons.person_outline, 4, false),
             ],
           ),
@@ -609,14 +627,12 @@ class _ChatsScreenState extends State<ChatsScreen> with SingleTickerProviderStat
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.white.withOpacity(0.2) : Colors.transparent,
+          color: isSelected
+              ? Colors.white.withOpacity(0.2)
+              : Colors.transparent,
           shape: BoxShape.circle,
         ),
-        child: Icon(
-          icon,
-          color: Colors.white,
-          size: 28,
-        ),
+        child: Icon(icon, color: Colors.white, size: 28),
       ),
     );
   }
@@ -649,14 +665,12 @@ class _ChatsScreenState extends State<ChatsScreen> with SingleTickerProviderStat
         const end = Offset.zero;
         const curve = Curves.easeInOut;
 
-        var tween = Tween(begin: begin, end: end).chain(
-          CurveTween(curve: curve),
-        );
+        var tween = Tween(
+          begin: begin,
+          end: end,
+        ).chain(CurveTween(curve: curve));
 
-        return SlideTransition(
-          position: animation.drive(tween),
-          child: child,
-        );
+        return SlideTransition(position: animation.drive(tween), child: child);
       },
     );
   }

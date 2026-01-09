@@ -13,8 +13,11 @@ class LiveFinalizada extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const Icon(Icons.emoji_events,
-                  color: Color(0xFFE6B6FF), size: 70),
+              const Icon(
+                Icons.emoji_events,
+                color: Color(0xFFE6B6FF),
+                size: 70,
+              ),
 
               const SizedBox(height: 10),
 
@@ -32,10 +35,7 @@ class LiveFinalizada extends StatelessWidget {
               const Text(
                 "Aquí está el resumen de tu transmisión",
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.white70,
-                  fontSize: 15,
-                ),
+                style: TextStyle(color: Colors.white70, fontSize: 15),
               ),
 
               const SizedBox(height: 30),
@@ -225,10 +225,7 @@ Widget _smallMetric({
         Text(
           label,
           textAlign: TextAlign.center,
-          style: const TextStyle(
-            color: Colors.white54,
-            fontSize: 13,
-          ),
+          style: const TextStyle(color: Colors.white54, fontSize: 13),
         ),
       ],
     ),

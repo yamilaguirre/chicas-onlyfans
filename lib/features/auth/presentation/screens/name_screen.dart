@@ -9,11 +9,8 @@ import 'birth_date_screen.dart';
 
 class NameScreen extends StatefulWidget {
   final String phoneNumber;
-  
-  const NameScreen({
-    super.key,
-    required this.phoneNumber,
-  });
+
+  const NameScreen({super.key, required this.phoneNumber});
 
   @override
   State<NameScreen> createState() => _NameScreenState();
@@ -25,8 +22,18 @@ class _NameScreenState extends State<NameScreen> {
   bool _isButtonEnabled = false;
 
   final List<String> _randomNames = [
-    'Carlos', 'Miguel', 'Juan', 'Diego', 'Luis', 'Pedro',
-    'Fernando', 'Roberto', 'Andres', 'Mario', 'Jorge', 'Ricardo',
+    'Carlos',
+    'Miguel',
+    'Juan',
+    'Diego',
+    'Luis',
+    'Pedro',
+    'Fernando',
+    'Roberto',
+    'Andres',
+    'Mario',
+    'Jorge',
+    'Ricardo',
   ];
 
   @override
@@ -75,9 +82,7 @@ class _NameScreenState extends State<NameScreen> {
     return Scaffold(
       backgroundColor: AppColors.textWhite,
       appBar: AppBar(
-        leading: CustomBackButton(
-          color: AppColors.textSecondary,
-        ),
+        leading: CustomBackButton(color: AppColors.textSecondary),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
@@ -90,7 +95,7 @@ class _NameScreenState extends State<NameScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 32),
-                
+
                 // Título
                 const Text(
                   AppStrings.nameTitle,
@@ -100,9 +105,9 @@ class _NameScreenState extends State<NameScreen> {
                     color: AppColors.textPrimary,
                   ),
                 ),
-                
+
                 const SizedBox(height: 32),
-                
+
                 // Campo de nombre con validación
                 TextFormField(
                   controller: _nameController,
@@ -119,9 +124,9 @@ class _NameScreenState extends State<NameScreen> {
                   validator: Validators.validateName,
                   onChanged: (value) => _validateForm(),
                 ),
-                
+
                 const SizedBox(height: 8),
-                
+
                 // Hint
                 Text(
                   AppStrings.nameHint,
@@ -130,23 +135,23 @@ class _NameScreenState extends State<NameScreen> {
                     color: AppColors.textSecondary,
                   ),
                 ),
-                
+
                 const SizedBox(height: 24),
-                
+
                 // Botón generar nombre aleatorio
                 PrimaryButton(
                   text: AppStrings.generateButton,
                   onPressed: _generateRandomName,
                 ),
-                
+
                 const Spacer(),
-                
+
                 // Botón continuar
                 PrimaryButton(
                   text: AppStrings.continueButton,
                   onPressed: _isButtonEnabled ? _handleContinue : null,
                 ),
-                
+
                 const SizedBox(height: 48),
               ],
             ),

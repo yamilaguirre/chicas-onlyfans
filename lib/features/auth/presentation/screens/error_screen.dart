@@ -13,9 +13,7 @@ class ErrorScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.textWhite,
       appBar: AppBar(
-        leading: CustomBackButton(
-          color: AppColors.textSecondary,
-        ),
+        leading: CustomBackButton(color: AppColors.textSecondary),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
@@ -26,7 +24,7 @@ class ErrorScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Spacer(),
-              
+
               // Título
               const Text(
                 AppStrings.errorTitle,
@@ -36,9 +34,9 @@ class ErrorScreen extends StatelessWidget {
                   color: AppColors.textPrimary,
                 ),
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               // Mensaje de error
               Text(
                 AppStrings.errorMessage,
@@ -49,9 +47,9 @@ class ErrorScreen extends StatelessWidget {
                   height: 1.5,
                 ),
               ),
-              
+
               const Spacer(),
-              
+
               // Botón crear cuenta
               PrimaryButton(
                 text: AppStrings.createNewAccount,
@@ -64,7 +62,7 @@ class ErrorScreen extends StatelessWidget {
                   );
                 },
               ),
-              
+
               const SizedBox(height: 48),
             ],
           ),

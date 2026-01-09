@@ -220,7 +220,11 @@ class _CameraPageState extends State<CameraPage> {
                               children: [
                                 _iconBtn(0, Icons.flip_camera_ios, "Voltear"),
                                 const SizedBox(width: 13),
-                                _iconBtn(1, Icons.filter_alt_outlined, "Filtros"),
+                                _iconBtn(
+                                  1,
+                                  Icons.filter_alt_outlined,
+                                  "Filtros",
+                                ),
                                 const SizedBox(width: 13),
                                 _iconBtn(2, Icons.auto_awesome, "Efectos"),
                                 const SizedBox(width: 13),

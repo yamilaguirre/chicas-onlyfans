@@ -22,27 +22,27 @@ class ProfileScreen extends StatelessWidget {
                   children: [
                     // Header del perfil
                     _buildProfileHeader(),
-                    
+
                     const SizedBox(height: 20),
-                    
+
                     // Sección Mis Minutos
                     _buildMyMinutesSection(),
-                    
+
                     const SizedBox(height: 20),
-                    
+
                     // Videollamadas VIP
                     _buildVIPSection(),
-                    
+
                     const SizedBox(height: 20),
-                    
+
                     // Métodos de Pago
                     _buildPaymentMethodsSection(),
-                    
+
                     const SizedBox(height: 20),
-                    
+
                     // Seguridad y Privacidad
                     _buildSecuritySection(),
-                    
+
                     const SizedBox(height: 100), // Espacio para el menú
                   ],
                 ),
@@ -73,10 +73,7 @@ class ProfileScreen extends StatelessWidget {
               Container(
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(
-                    color: const Color(0xFFE991C5),
-                    width: 3,
-                  ),
+                  border: Border.all(color: const Color(0xFFE991C5), width: 3),
                 ),
                 child: const CircleAvatar(
                   radius: 45,
@@ -89,7 +86,10 @@ class ProfileScreen extends StatelessWidget {
                 bottom: 0,
                 right: 0,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFFE991C5),
                     borderRadius: BorderRadius.circular(12),
@@ -106,9 +106,9 @@ class ProfileScreen extends StatelessWidget {
               ),
             ],
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Nombre
           const Text(
             'Carlos Méndez',
@@ -118,20 +118,17 @@ class ProfileScreen extends StatelessWidget {
               color: Color(0xFF333333),
             ),
           ),
-          
+
           const SizedBox(height: 4),
-          
+
           // Edad
           const Text(
             '28 años',
-            style: TextStyle(
-              fontSize: 16,
-              color: Color(0xFF666666),
-            ),
+            style: TextStyle(fontSize: 16, color: Color(0xFF666666)),
           ),
-          
+
           const SizedBox(height: 20),
-          
+
           // Información de contacto
           _buildInfoRow(Icons.cake_outlined, '16 de Marzo'),
           const SizedBox(height: 12),
@@ -146,18 +143,11 @@ class ProfileScreen extends StatelessWidget {
   Widget _buildInfoRow(IconData icon, String text) {
     return Row(
       children: [
-        Icon(
-          icon,
-          size: 20,
-          color: const Color(0xFF999999),
-        ),
+        Icon(icon, size: 20, color: const Color(0xFF999999)),
         const SizedBox(width: 12),
         Text(
           text,
-          style: const TextStyle(
-            fontSize: 14,
-            color: Color(0xFF666666),
-          ),
+          style: const TextStyle(fontSize: 14, color: Color(0xFF666666)),
         ),
       ],
     );
@@ -177,9 +167,9 @@ class ProfileScreen extends StatelessWidget {
               color: Color(0xFF333333),
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Tarjeta Minutos Live
           _buildMinutesCard(
             icon: Icons.videocam,
@@ -188,9 +178,9 @@ class ProfileScreen extends StatelessWidget {
             remaining: '45 minutos restantes',
             color: const Color(0xFFE991C5),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Tarjeta Minutos Salas
           _buildMinutesCard(
             icon: Icons.people,
@@ -235,11 +225,7 @@ class ProfileScreen extends StatelessWidget {
                   color: color.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(
-                  icon,
-                  color: color,
-                  size: 24,
-                ),
+                child: Icon(icon, color: color, size: 24),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -254,7 +240,10 @@ class ProfileScreen extends StatelessWidget {
               ),
               // Badge con minutos
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: color,
                   borderRadius: BorderRadius.circular(20),
@@ -270,20 +259,17 @@ class ProfileScreen extends StatelessWidget {
               ),
             ],
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Minutos restantes
           Text(
             remaining,
-            style: const TextStyle(
-              fontSize: 13,
-              color: Color(0xFF999999),
-            ),
+            style: const TextStyle(fontSize: 13, color: Color(0xFF999999)),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Botón Comprar
           SizedBox(
             width: double.infinity,
@@ -300,10 +286,7 @@ class ProfileScreen extends StatelessWidget {
               ),
               child: const Text(
                 'Comprar',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
             ),
           ),
@@ -327,33 +310,42 @@ class ProfileScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          
+
           // Solicitudes Enviadas
           _buildVIPCard(
             icon: Icons.send,
             title: 'Solicitudes Enviadas',
             count: 2,
             items: [
-              {'name': 'María González', 'status': 'Esperando aprobación • Hace 2 días'},
-              {'name': 'Laura Torres', 'status': 'Esperando aprobación • Hace 1 día'},
+              {
+                'name': 'María González',
+                'status': 'Esperando aprobación • Hace 2 días',
+              },
+              {
+                'name': 'Laura Torres',
+                'status': 'Esperando aprobación • Hace 1 día',
+              },
             ],
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // VIP Programadas
           _buildVIPCard(
             icon: Icons.calendar_today,
             title: 'VIP Programadas',
             count: 1,
             items: [
-              {'name': 'Ana Rodríguez', 'status': 'Lunes 5 de Noviembre • 19:30'},
+              {
+                'name': 'Ana Rodríguez',
+                'status': 'Lunes 5 de Noviembre • 19:30',
+              },
             ],
             showButtons: true,
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Historial VIP
           _buildVIPHistoryCard(),
         ],
@@ -399,7 +391,10 @@ class ProfileScreen extends StatelessWidget {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: const Color(0xFFE991C5),
                   borderRadius: BorderRadius.circular(12),
@@ -416,63 +411,76 @@ class ProfileScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          ...items.map((item) => Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: Row(
-              children: [
-                const CircleAvatar(
-                  radius: 20,
-                  backgroundImage: NetworkImage('https://randomuser.me/api/portraits/women/1.jpg'),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        item['name']!,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF333333),
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        item['status']!,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Color(0xFF999999),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                if (showButtons) ...[
-                  ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFE991C5),
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      minimumSize: Size.zero,
+          ...items.map(
+            (item) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Row(
+                children: [
+                  const CircleAvatar(
+                    radius: 20,
+                    backgroundImage: NetworkImage(
+                      'https://randomuser.me/api/portraits/women/1.jpg',
                     ),
-                    child: const Text('Entrar', style: TextStyle(fontSize: 12)),
                   ),
-                  const SizedBox(width: 8),
-                  TextButton(
-                    onPressed: () {},
-                    child: const Text('Cancelar', style: TextStyle(fontSize: 12)),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item['name']!,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF333333),
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          item['status']!,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Color(0xFF999999),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ] else
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.close, size: 18),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                  ),
-              ],
+                  if (showButtons) ...[
+                    ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFE991C5),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        minimumSize: Size.zero,
+                      ),
+                      child: const Text(
+                        'Entrar',
+                        style: TextStyle(fontSize: 12),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    TextButton(
+                      onPressed: () {},
+                      child: const Text(
+                        'Cancelar',
+                        style: TextStyle(fontSize: 12),
+                      ),
+                    ),
+                  ] else
+                    IconButton(
+                      onPressed: () {},
+                      icon: const Icon(Icons.close, size: 18),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                    ),
+                ],
+              ),
             ),
-          )),
+          ),
         ],
       ),
     );
@@ -481,7 +489,11 @@ class ProfileScreen extends StatelessWidget {
   Widget _buildVIPHistoryCard() {
     final historyItems = [
       {'name': 'Sofía Martínez', 'time': 'Ayer', 'price': '65 Bs'},
-      {'name': 'Valentina López', 'time': '10 min • 04.04.2025', 'price': '35 Bs'},
+      {
+        'name': 'Valentina López',
+        'time': '10 min • 04.04.2025',
+        'price': '35 Bs',
+      },
       {'name': 'Isabella Cruz', 'time': '6 min • 30.04.2025', 'price': '20 Bs'},
     ];
 
@@ -516,48 +528,52 @@ class ProfileScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          ...historyItems.map((item) => Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: Row(
-              children: [
-                const CircleAvatar(
-                  radius: 18,
-                  backgroundImage: NetworkImage('https://randomuser.me/api/portraits/women/4.jpg'),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        item['name']!,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF333333),
-                        ),
-                      ),
-                      Text(
-                        item['time']!,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Color(0xFF999999),
-                        ),
-                      ),
-                    ],
+          ...historyItems.map(
+            (item) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Row(
+                children: [
+                  const CircleAvatar(
+                    radius: 18,
+                    backgroundImage: NetworkImage(
+                      'https://randomuser.me/api/portraits/women/4.jpg',
+                    ),
                   ),
-                ),
-                Text(
-                  item['price']!,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF4A1A4A),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item['name']!,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF333333),
+                          ),
+                        ),
+                        Text(
+                          item['time']!,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Color(0xFF999999),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                  Text(
+                    item['price']!,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF4A1A4A),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          )),
+          ),
         ],
       ),
     );
@@ -578,7 +594,7 @@ class ProfileScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          
+
           Container(
             decoration: BoxDecoration(
               color: Colors.white,
@@ -594,7 +610,11 @@ class ProfileScreen extends StatelessWidget {
             padding: const EdgeInsets.all(20),
             child: Column(
               children: [
-                _buildPaymentMethodItem('Visa', '**** 4242 • Exp. 12/26', isPrincipal: true),
+                _buildPaymentMethodItem(
+                  'Visa',
+                  '**** 4242 • Exp. 12/26',
+                  isPrincipal: true,
+                ),
                 const Divider(height: 24),
                 _buildPaymentMethodItem('Mastercard', '**** 5880 • Exp. 08/27'),
                 const SizedBox(height: 16),
@@ -614,7 +634,10 @@ class ProfileScreen extends StatelessWidget {
                 const Divider(height: 24),
                 _buildMenuItem(Icons.receipt_long, 'Historial de compras'),
                 const SizedBox(height: 8),
-                _buildMenuItem(Icons.description, 'Configuración de facturación'),
+                _buildMenuItem(
+                  Icons.description,
+                  'Configuración de facturación',
+                ),
               ],
             ),
           ),
@@ -623,7 +646,11 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildPaymentMethodItem(String cardType, String cardNumber, {bool isPrincipal = false}) {
+  Widget _buildPaymentMethodItem(
+    String cardType,
+    String cardNumber, {
+    bool isPrincipal = false,
+  }) {
     return Row(
       children: [
         Container(
@@ -632,7 +659,11 @@ class ProfileScreen extends StatelessWidget {
             color: const Color(0xFFF5F5F5),
             borderRadius: BorderRadius.circular(8),
           ),
-          child: const Icon(Icons.credit_card, color: Color(0xFF4A1A4A), size: 20),
+          child: const Icon(
+            Icons.credit_card,
+            color: Color(0xFF4A1A4A),
+            size: 20,
+          ),
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -652,7 +683,10 @@ class ProfileScreen extends StatelessWidget {
                   if (isPrincipal) ...[
                     const SizedBox(width: 8),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
                       decoration: BoxDecoration(
                         color: const Color(0xFFE991C5),
                         borderRadius: BorderRadius.circular(8),
@@ -672,10 +706,7 @@ class ProfileScreen extends StatelessWidget {
               const SizedBox(height: 2),
               Text(
                 cardNumber,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Color(0xFF999999),
-                ),
+                style: const TextStyle(fontSize: 12, color: Color(0xFF999999)),
               ),
             ],
           ),
@@ -700,7 +731,7 @@ class ProfileScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          
+
           Container(
             decoration: BoxDecoration(
               color: Colors.white,
@@ -718,13 +749,20 @@ class ProfileScreen extends StatelessWidget {
               children: [
                 _buildMenuItem(Icons.lock_outline, 'Cambiar contraseña'),
                 const SizedBox(height: 8),
-                _buildMenuItem(Icons.verified_user_outlined, 'Verificación en dos pasos'),
+                _buildMenuItem(
+                  Icons.verified_user_outlined,
+                  'Verificación en dos pasos',
+                ),
                 const SizedBox(height: 8),
                 _buildMenuItem(Icons.camera_alt_outlined, 'Permisos de cámara'),
                 const SizedBox(height: 8),
                 _buildMenuItem(Icons.mic_outlined, 'Permisos de micrófono'),
                 const Divider(height: 24),
-                _buildMenuItem(Icons.logout, 'Cerrar sesión', color: Colors.red),
+                _buildMenuItem(
+                  Icons.logout,
+                  'Cerrar sesión',
+                  color: Colors.red,
+                ),
               ],
             ),
           ),
@@ -751,11 +789,7 @@ class ProfileScreen extends StatelessWidget {
                 ),
               ),
             ),
-            Icon(
-              Icons.chevron_right,
-              color: const Color(0xFFCCCCCC),
-              size: 20,
-            ),
+            Icon(Icons.chevron_right, color: const Color(0xFFCCCCCC), size: 20),
           ],
         ),
       ),
@@ -785,13 +819,17 @@ class ProfileScreen extends StatelessWidget {
               _buildNavIcon(Icons.grid_view, 1, false, () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const FavoritesScreen()),
+                  MaterialPageRoute(
+                    builder: (context) => const FavoritesScreen(),
+                  ),
                 );
               }),
               _buildNavIcon(Icons.store, 2, false, () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const PackagesScreen()),
+                  MaterialPageRoute(
+                    builder: (context) => const PackagesScreen(),
+                  ),
                 );
               }),
               _buildNavIcon(Icons.chat_bubble_outline, 3, false, () {
@@ -808,20 +846,23 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildNavIcon(IconData icon, int index, bool isSelected, VoidCallback onTap) {
+  Widget _buildNavIcon(
+    IconData icon,
+    int index,
+    bool isSelected,
+    VoidCallback onTap,
+  ) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.white.withOpacity(0.2) : Colors.transparent,
+          color: isSelected
+              ? Colors.white.withOpacity(0.2)
+              : Colors.transparent,
           shape: BoxShape.circle,
         ),
-        child: Icon(
-          icon,
-          color: Colors.white,
-          size: 28,
-        ),
+        child: Icon(icon, color: Colors.white, size: 28),
       ),
     );
   }

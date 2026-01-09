@@ -47,8 +47,14 @@ class ContnScreen extends StatelessWidget {
 
               const SizedBox(height: 10),
               _activityItem("Ganaste 45 nuevos seguidores", "Hace 2 horas"),
-              _activityItem("Tus videos recibieron 1.2K \n interacciones", " Hace 4 horas"),
-              _activityItem("Completaste un Live de 45 minutos", "Hace 6 horas"),
+              _activityItem(
+                "Tus videos recibieron 1.2K \n interacciones",
+                " Hace 4 horas",
+              ),
+              _activityItem(
+                "Completaste un Live de 45 minutos",
+                "Hace 6 horas",
+              ),
             ],
           ),
         ),
@@ -77,11 +83,8 @@ class ContnScreen extends StatelessWidget {
             ),
             Text(
               "● Activa",
-              style: TextStyle(
-                fontSize: 13,
-                color: Colors.green,
-              ),
-            )
+              style: TextStyle(fontSize: 13, color: Colors.green),
+            ),
           ],
         ),
         const Spacer(),
@@ -91,7 +94,7 @@ class ContnScreen extends StatelessWidget {
             SizedBox(width: 14),
             Icon(Icons.settings, color: Color(0xff4c3a57)),
           ],
-        )
+        ),
       ],
     );
   }
@@ -137,10 +140,7 @@ class ContnScreen extends StatelessWidget {
           ),
           Text(
             label,
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.purple.shade300,
-            ),
+            style: TextStyle(fontSize: 12, color: Colors.purple.shade300),
           ),
         ],
       ),
@@ -174,14 +174,18 @@ class ContnScreen extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: const [
-                  Text("María González",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xff4c3a57),
-                      )),
-                  Text("Bailarina y creadora de contenido ✨",
-                      style: TextStyle(fontSize: 12, color: Colors.grey)),
+                  Text(
+                    "María González",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xff4c3a57),
+                    ),
+                  ),
+                  Text(
+                    "Bailarina y creadora de contenido ✨",
+                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
                 ],
               ),
             ],
@@ -257,14 +261,16 @@ class ContnScreen extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xff4c3a57),
-                  )),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xff4c3a57),
+                ),
+              ),
               const Text("Hace 6 horas", style: TextStyle(color: Colors.grey)),
             ],
-          )
+          ),
         ],
       ),
     );
@@ -302,9 +308,18 @@ class ContnScreen extends StatelessWidget {
         }
       },
       items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.person), label: "ContenidoScreen"),
-        BottomNavigationBarItem(icon: Icon(Icons.star), label: "ContenidoScreen"),
-        BottomNavigationBarItem(icon: Icon(Icons.chat_bubble), label: "MensajeríaScreen"),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.person),
+          label: "ContenidoScreen",
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.star),
+          label: "ContenidoScreen",
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.chat_bubble),
+          label: "MensajeríaScreen",
+        ),
       ],
     );
   }

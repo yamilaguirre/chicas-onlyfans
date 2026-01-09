@@ -14,7 +14,7 @@ class AppTheme {
       appBarTheme: const AppBarTheme(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        iconTheme: IconThemeData(color: AppColors.textWhite), 
+        iconTheme: IconThemeData(color: AppColors.textWhite),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: false,
@@ -30,10 +30,7 @@ class AppTheme {
         focusedErrorBorder: const UnderlineInputBorder(
           borderSide: BorderSide(color: AppColors.error, width: 2),
         ),
-        hintStyle: const TextStyle(
-          color: AppColors.textHint,
-          fontSize: 14,
-        ),
+        hintStyle: const TextStyle(color: AppColors.textHint, fontSize: 14),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(

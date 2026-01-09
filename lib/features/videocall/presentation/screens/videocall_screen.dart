@@ -6,17 +6,14 @@ class VideoCallScreen extends StatefulWidget {
   final String name;
   final String avatar;
 
-  const VideoCallScreen({
-    super.key,
-    required this.name,
-    required this.avatar,
-  });
+  const VideoCallScreen({super.key, required this.name, required this.avatar});
 
   @override
   State<VideoCallScreen> createState() => _VideoCallScreenState();
 }
 
-class _VideoCallScreenState extends State<VideoCallScreen> with SingleTickerProviderStateMixin {
+class _VideoCallScreenState extends State<VideoCallScreen>
+    with SingleTickerProviderStateMixin {
   late Timer _timer;
   int _seconds = 0;
   bool _isMuted = false;
@@ -33,14 +30,17 @@ class _VideoCallScreenState extends State<VideoCallScreen> with SingleTickerProv
         _seconds++;
       });
     });
-    
+
     // Animación de parpadeo para el punto rojo
     _blinkController = AnimationController(
       duration: const Duration(milliseconds: 1000),
       vsync: this,
     )..repeat(reverse: true);
-    
-    _blinkAnimation = Tween<double>(begin: 0.3, end: 1.0).animate(_blinkController);
+
+    _blinkAnimation = Tween<double>(
+      begin: 0.3,
+      end: 1.0,
+    ).animate(_blinkController);
   }
 
   @override
@@ -100,7 +100,10 @@ class _VideoCallScreenState extends State<VideoCallScreen> with SingleTickerProv
               child: SafeArea(
                 bottom: false,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 12,
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -118,11 +121,7 @@ class _VideoCallScreenState extends State<VideoCallScreen> with SingleTickerProv
                         ),
                         child: Row(
                           children: const [
-                            Icon(
-                              Icons.star,
-                              color: Colors.white,
-                              size: 16,
-                            ),
+                            Icon(Icons.star, color: Colors.white, size: 16),
                             SizedBox(width: 4),
                             Text(
                               'Sala VIP',
@@ -135,7 +134,7 @@ class _VideoCallScreenState extends State<VideoCallScreen> with SingleTickerProv
                           ],
                         ),
                       ),
-                      
+
                       // Nombre con "Videollamada con"
                       Expanded(
                         child: Column(
@@ -163,7 +162,7 @@ class _VideoCallScreenState extends State<VideoCallScreen> with SingleTickerProv
                           ],
                         ),
                       ),
-                      
+
                       // Indicador EN VIVO con tiempo (clickeable)
                       GestureDetector(
                         onTap: () {
@@ -371,14 +370,12 @@ class _VideoCallScreenState extends State<VideoCallScreen> with SingleTickerProv
         decoration: BoxDecoration(
           color: isEndCall
               ? Colors.red
-              : (isActive ? Colors.white.withOpacity(0.2) : Colors.white.withOpacity(0.1)),
+              : (isActive
+                    ? Colors.white.withOpacity(0.2)
+                    : Colors.white.withOpacity(0.1)),
           shape: BoxShape.circle,
         ),
-        child: Icon(
-          icon,
-          color: Colors.white,
-          size: 28,
-        ),
+        child: Icon(icon, color: Colors.white, size: 28),
       ),
     );
   }
@@ -387,11 +384,13 @@ class _VideoCallScreenState extends State<VideoCallScreen> with SingleTickerProv
     // Calcular posición relativa al botón
     final RenderBox? button = context.findRenderObject() as RenderBox?;
     if (button == null) return;
-    
+
     final offset = button.localToGlobal(Offset.zero);
-    
+
     // Posicionar el menú arriba del botón
-    final top = offset.dy - 120; // 120px arriba del botón (altura aproximada de 2 items)
+    final top =
+        offset.dy -
+        120; // 120px arriba del botón (altura aproximada de 2 items)
     final left = offset.dx - 100; // Centrar más o menos con el botón
 
     showDialog(
@@ -480,11 +479,7 @@ class _VideoCallScreenState extends State<VideoCallScreen> with SingleTickerProv
                 color: Colors.grey[100],
                 shape: BoxShape.circle,
               ),
-              child: Icon(
-                icon,
-                size: 20,
-                color: AppColors.primary,
-              ),
+              child: Icon(icon, size: 20, color: AppColors.primary),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -502,10 +497,7 @@ class _VideoCallScreenState extends State<VideoCallScreen> with SingleTickerProv
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                    ),
+                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                   ),
                 ],
               ),
@@ -614,7 +606,7 @@ class _VideoCallScreenState extends State<VideoCallScreen> with SingleTickerProv
                           price: '20 Bs',
                           paymentType: 'Pago directo',
                         ),
-                        
+
                         // Nota informativa
                         const SizedBox(height: 16),
                         Container(
@@ -698,10 +690,7 @@ class _VideoCallScreenState extends State<VideoCallScreen> with SingleTickerProv
                 const SizedBox(height: 4),
                 Text(
                   paymentType,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[600],
-                  ),
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                 ),
               ],
             ),

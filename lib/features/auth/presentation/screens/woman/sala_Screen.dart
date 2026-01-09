@@ -4,7 +4,6 @@ import 'package:camera/camera.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:chicas_app/features/auth/presentation/screens/woman/live3_pague.dart';
 
-
 class SalaScreen extends StatefulWidget {
   const SalaScreen({super.key});
 
@@ -221,7 +220,11 @@ class _SalaScreenState extends State<SalaScreen> {
                               children: [
                                 _iconBtn(0, Icons.flip_camera_ios, "Voltear"),
                                 const SizedBox(width: 13),
-                                _iconBtn(1, Icons.filter_alt_outlined, "Filtros"),
+                                _iconBtn(
+                                  1,
+                                  Icons.filter_alt_outlined,
+                                  "Filtros",
+                                ),
                                 const SizedBox(width: 13),
                                 _iconBtn(2, Icons.auto_awesome, "Efectos"),
                                 const SizedBox(width: 13),
@@ -257,7 +260,7 @@ class _SalaScreenState extends State<SalaScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                             builder: (_) => const  ConfiguracionSalaPanel(),
+                              builder: (_) => const ConfiguracionSalaPanel(),
                             ),
                           );
                         },

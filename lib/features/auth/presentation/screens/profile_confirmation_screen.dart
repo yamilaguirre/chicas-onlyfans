@@ -1,17 +1,15 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-
+import 'package:image_picker/image_picker.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/widgets/atoms/custom_back_button.dart';
 import '../../../../core/widgets/atoms/primary_button.dart';
-import '../../../../core/utils/image_picker_helper.dart';
 import 'follow_profiles_screen.dart';
 
 class ProfileConfirmationScreen extends StatefulWidget {
   final String phoneNumber;
   final String name;
-  final String birthDate;
+  final DateTime birthDate;
 
   const ProfileConfirmationScreen({
     super.key,
@@ -21,52 +19,65 @@ class ProfileConfirmationScreen extends StatefulWidget {
   });
 
   @override
-  State<ProfileConfirmationScreen> createState() => _ProfileConfirmationScreenState();
+  State<ProfileConfirmationScreen> createState() =>
+      _ProfileConfirmationScreenState();
 }
 
 class _ProfileConfirmationScreenState extends State<ProfileConfirmationScreen> {
   Uint8List? _profileImage;
-  final TextEditingController _emailController = TextEditingController();
-  late final TextEditingController _phoneController;
-  bool _isEditing = false;
+  final ImagePicker _picker = ImagePicker();
+  late TextEditingController _nameController;
+  late TextEditingController _usernameController;
+  late TextEditingController _birthDateController;
+  late TextEditingController _emailController;
 
   @override
   void initState() {
     super.initState();
-    _phoneController = TextEditingController(text: widget.phoneNumber);
+    _nameController = TextEditingController(text: widget.name);
+    _usernameController = TextEditingController(
+      text: 'anonimo${DateTime.now().millisecondsSinceEpoch % 1000}',
+    );
+    _birthDateController = TextEditingController(
+      text:
+          '${widget.birthDate.day.toString().padLeft(2, '0')}/${widget.birthDate.month.toString().padLeft(2, '0')}/${widget.birthDate.year}',
+    );
+    _emailController = TextEditingController();
   }
 
   @override
   void dispose() {
+    _nameController.dispose();
+    _usernameController.dispose();
+    _birthDateController.dispose();
     _emailController.dispose();
-    _phoneController.dispose();
     super.dispose();
   }
 
   Future<void> _pickImage() async {
-    final image = await ImagePickerHelper.showImageSourceDialog(context);
+    final XFile? image = await _picker.pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 1024,
+      maxHeight: 1024,
+      imageQuality: 85,
+    );
+
     if (image != null) {
+      final bytes = await image.readAsBytes();
       setState(() {
-        _profileImage = image;
+        _profileImage = bytes;
       });
     }
   }
 
-  void _toggleEdit() {
-    setState(() {
-      _isEditing = !_isEditing;
-    });
-  }
-
   void _handleContinue() {
-    // Navegar a la pantalla de seguir perfiles
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => FollowProfilesScreen(
           phoneNumber: widget.phoneNumber,
-          name: widget.name,
-          birthDate: widget.birthDate,
+          name: _nameController.text,
+          birthDate: _birthDateController.text,
         ),
       ),
     );
@@ -77,9 +88,7 @@ class _ProfileConfirmationScreenState extends State<ProfileConfirmationScreen> {
     return Scaffold(
       backgroundColor: AppColors.textWhite,
       appBar: AppBar(
-        leading: CustomBackButton(
-          color: AppColors.textSecondary,
-        ),
+        leading: CustomBackButton(color: AppColors.textSecondary),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
@@ -110,11 +119,12 @@ class _ProfileConfirmationScreenState extends State<ProfileConfirmationScreen> {
 
                 // Título
                 const Text(
-                  AppStrings.confirmProfileTitle,
+                  'Confirma tu perfil 123',
                   style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
                     color: AppColors.textPrimary,
+                    height: 1.2,
                   ),
                 ),
 
@@ -127,15 +137,15 @@ class _ProfileConfirmationScreenState extends State<ProfileConfirmationScreen> {
                       GestureDetector(
                         onTap: _pickImage,
                         child: Container(
-                          width: 120,
-                          height: 120,
+                          width: 140,
+                          height: 140,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             border: Border.all(
                               color: AppColors.primary,
-                              width: 3,
+                              width: 4,
                             ),
-                            color: AppColors.background,
+                            color: const Color(0xFFE0E0E0),
                             image: _profileImage != null
                                 ? DecorationImage(
                                     image: MemoryImage(_profileImage!),
@@ -146,8 +156,8 @@ class _ProfileConfirmationScreenState extends State<ProfileConfirmationScreen> {
                           child: _profileImage == null
                               ? const Icon(
                                   Icons.person,
-                                  size: 60,
-                                  color: AppColors.textHint,
+                                  size: 70,
+                                  color: Colors.white,
                                 )
                               : null,
                         ),
@@ -158,16 +168,16 @@ class _ProfileConfirmationScreenState extends State<ProfileConfirmationScreen> {
                         child: GestureDetector(
                           onTap: _pickImage,
                           child: Container(
-                            width: 36,
-                            height: 36,
+                            width: 40,
+                            height: 40,
                             decoration: const BoxDecoration(
                               color: AppColors.primary,
                               shape: BoxShape.circle,
                             ),
                             child: const Icon(
-                              Icons.camera_alt,
+                              Icons.check,
                               color: AppColors.textWhite,
-                              size: 20,
+                              size: 22,
                             ),
                           ),
                         ),
@@ -176,54 +186,128 @@ class _ProfileConfirmationScreenState extends State<ProfileConfirmationScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 48),
+                const SizedBox(height: 40),
 
-                // Botón editar
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton.icon(
-                    onPressed: _toggleEdit,
-                    icon: Icon(
-                      _isEditing ? Icons.check : Icons.edit,
-                      size: 18,
-                      color: AppColors.primary,
+                // Nombre completo - EDITABLE
+                TextFormField(
+                  controller: _nameController,
+                  style: const TextStyle(fontSize: 16, color: Colors.black),
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.white,
+                    hintText: 'Nombre completo',
+                    hintStyle: const TextStyle(color: Colors.grey),
+                    contentPadding: const EdgeInsets.all(18),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
                     ),
-                    label: Text(
-                      _isEditing ? 'Guardar' : 'Editar',
-                      style: const TextStyle(color: AppColors.primary),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(
+                        color: AppColors.primary,
+                        width: 2,
+                      ),
                     ),
                   ),
                 ),
+                const SizedBox(height: 12),
 
-                // Información del perfil
-                _buildInfoField(widget.phoneNumber, editable: false),
-                const SizedBox(height: 16),
-                _buildInfoField(widget.name, editable: false),
-                const SizedBox(height: 16),
-                _buildInfoField(widget.birthDate, icon: Icons.calendar_today, editable: false),
-                const SizedBox(height: 16),
-                _buildEditableField(
-                  controller: _emailController,
-                  hint: 'E-mail',
-                  icon: Icons.email,
+                // Nombre de usuario - EDITABLE
+                TextFormField(
+                  controller: _usernameController,
+                  style: const TextStyle(fontSize: 16, color: Colors.black),
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.white,
+                    hintText: 'Nombre de usuario',
+                    hintStyle: const TextStyle(color: Colors.grey),
+                    contentPadding: const EdgeInsets.all(18),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(
+                        color: AppColors.primary,
+                        width: 2,
+                      ),
+                    ),
+                  ),
                 ),
-                const SizedBox(height: 16),
-                _buildEditableField(
-                  controller: _phoneController,
-                  hint: 'Teléfono',
-                  icon: Icons.phone,
+                const SizedBox(height: 12),
+
+                // Fecha de nacimiento - EDITABLE
+                TextFormField(
+                  controller: _birthDateController,
+                  style: const TextStyle(fontSize: 16, color: Colors.black),
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.white,
+                    hintText: 'Fecha de nacimiento',
+                    hintStyle: const TextStyle(color: Colors.grey),
+                    suffixIcon: const Icon(
+                      Icons.calendar_today_outlined,
+                      color: Colors.grey,
+                    ),
+                    contentPadding: const EdgeInsets.all(18),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(
+                        color: AppColors.primary,
+                        width: 2,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+
+                // Email - EDITABLE
+                TextFormField(
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  style: const TextStyle(fontSize: 16, color: Colors.black),
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.white,
+                    hintText: 'E-mail',
+                    hintStyle: const TextStyle(color: Colors.grey),
+                    suffixIcon: const Icon(
+                      Icons.email_outlined,
+                      color: Colors.grey,
+                    ),
+                    contentPadding: const EdgeInsets.all(18),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(
+                        color: AppColors.primary,
+                        width: 2,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+
+                _buildInfoField(
+                  label: widget.phoneNumber,
+                  value: widget.phoneNumber,
+                  icon: Icons.phone_outlined,
                   prefix: '🇧🇴  ',
                 ),
 
-                const SizedBox(height: 32),
+                const SizedBox(height: 48),
 
-                // ------------------ BOTÓN CONTINUAR ------------------
-                PrimaryButton(
-                  text: AppStrings.confirmButton,
-                  onPressed: _handleContinue,
-    
-
-                ),
+                // Botón continuar
+                PrimaryButton(text: 'CONTINUAR', onPressed: _handleContinue),
 
                 const SizedBox(height: 48),
               ],
@@ -234,78 +318,42 @@ class _ProfileConfirmationScreenState extends State<ProfileConfirmationScreen> {
     );
   }
 
-  Widget _buildInfoField(String text, {IconData? icon, bool editable = true}) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      decoration: BoxDecoration(
-        color: AppColors.background,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              text,
-              style: const TextStyle(
-                fontSize: 16,
-                color: AppColors.textPrimary,
-              ),
-            ),
-          ),
-          if (icon != null)
-            Icon(
-              icon,
-              color: AppColors.textHint,
-              size: 20,
-            ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildEditableField({
-    required TextEditingController controller,
-    required String hint,
+  Widget _buildInfoField({
+    required String label,
+    required String value,
     IconData? icon,
     String? prefix,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
       decoration: BoxDecoration(
-        color: AppColors.background,
-        borderRadius: BorderRadius.circular(8),
+        color: const Color(0xFFF5F5F5),
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         children: [
           if (prefix != null)
-            Text(
-              prefix,
-              style: const TextStyle(
-                fontSize: 16,
-                color: AppColors.textPrimary,
+            Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: Text(
+                prefix,
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: AppColors.textPrimary,
+                ),
               ),
             ),
           Expanded(
-            child: TextFormField(
-              controller: controller,
-              enabled: _isEditing,
+            child: Text(
+              value,
               style: const TextStyle(
                 fontSize: 16,
-                color: AppColors.textPrimary,
-              ),
-              decoration: InputDecoration(
-                hintText: hint,
-                border: InputBorder.none,
-                isDense: true,
+                color: AppColors.textSecondary,
+                fontWeight: FontWeight.normal,
               ),
             ),
           ),
-          if (icon != null)
-            Icon(
-              icon,
-              color: AppColors.textHint,
-              size: 20,
-            ),
+          if (icon != null) Icon(icon, color: AppColors.textHint, size: 22),
         ],
       ),
     );

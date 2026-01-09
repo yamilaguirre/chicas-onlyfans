@@ -26,14 +26,8 @@ class PhoneInputField extends StatelessWidget {
           child: TextFormField(
             controller: countryController,
             onChanged: onCountryChanged,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-            ),
-            decoration: const InputDecoration(
-              hintText: 'BOL',
-              counterText: '',
-            ),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+            decoration: const InputDecoration(hintText: 'BOL', counterText: ''),
             maxLength: 5,
             inputFormatters: [
               FilteringTextInputFormatter.allow(RegExp(r'[A-Z]')),
@@ -47,10 +41,7 @@ class PhoneInputField extends StatelessWidget {
             controller: phoneController,
             onChanged: onPhoneChanged,
             keyboardType: TextInputType.phone,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-            ),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             maxLength: 15,
             inputFormatters: [
               FilteringTextInputFormatter.allow(RegExp(r'[0-9+\s]')),

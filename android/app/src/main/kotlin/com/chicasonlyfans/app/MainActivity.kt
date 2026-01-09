@@ -1,4 +1,4 @@
-package com.chasky.chicasonlyfans.chicasonlyfans
+package com.chicasonlyfans.app
 
 import io.flutter.embedding.android.FlutterActivity
 

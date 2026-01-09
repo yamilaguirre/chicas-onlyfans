@@ -6,6 +6,7 @@ import 'package:chicas_app/features/auth/presentation/screens/woman/sala_Screen.
 import 'package:chicas_app/features/auth/presentation/screens/woman/live2_page.dart';
 import 'package:chicas_app/features/auth/presentation/screens/woman/live3_pague.dart';
 import 'package:chicas_app/features/auth/presentation/screens/woman/camera_page.dart';
+
 class CrearContenidoPage extends StatelessWidget {
   const CrearContenidoPage({super.key});
 
@@ -61,7 +62,7 @@ class CrearContenidoPage extends StatelessWidget {
                       );
                     },
                   ),
-                  
+
                   // OPCIÓN 3
                   _opcionCard(
                     colores: [Color(0xff3d0647), Color(0xffb56bd8)],
@@ -77,7 +78,7 @@ class CrearContenidoPage extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 20),
-          
+
               // OPCIÓN INFERIOR
               Align(
                 alignment: Alignment.centerLeft,
@@ -90,12 +91,14 @@ class CrearContenidoPage extends StatelessWidget {
                     // Acción al subir contenido
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (_) => const ConfiguracionLive2Page()),
+                      MaterialPageRoute(
+                        builder: (_) => const ConfiguracionLive2Page(),
+                      ),
                     );
                   },
                 ),
               ),
-  //2
+              //2
             ],
           ),
         ),

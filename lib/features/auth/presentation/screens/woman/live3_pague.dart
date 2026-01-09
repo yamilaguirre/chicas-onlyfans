@@ -169,8 +169,13 @@ class _ConfiguracionSalaPanelState extends State<ConfiguracionSalaPanel> {
                             privacidad = value ? "aprobacion" : "aprovacion";
                           });
                         },
-                        activeTrackColor: const Color.fromARGB(255, 242, 185, 236),
-              
+                        activeTrackColor: const Color.fromARGB(
+                          255,
+                          242,
+                          185,
+                          236,
+                        ),
+
                         activeColor: const Color.fromARGB(255, 245, 82, 223),
                       ),
                     ),
@@ -191,31 +196,36 @@ class _ConfiguracionSalaPanelState extends State<ConfiguracionSalaPanel> {
                           borderRadius: BorderRadius.circular(12),
                           //lamado a sala_Screen
                           side: BorderSide(
-                            color: const Color.fromARGB(255,179,15,15).withOpacity(0.15),
+                            color: const Color.fromARGB(
+                              255,
+                              179,
+                              15,
+                              15,
+                            ).withOpacity(0.15),
                             width: 1.2,
                           ),
                         ),
                       ),
-                        clipBehavior: Clip.antiAlias,
-                        icon: const Icon(Icons.people, color: Colors.white),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const LiveScreen(),
-                            ),
-                          );
-                        },
-                        label: const Text(
-                          "Iniciar sala",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                      clipBehavior: Clip.antiAlias,
+                      icon: const Icon(Icons.people, color: Colors.white),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LiveScreen(),
                           ),
+                        );
+                      },
+                      label: const Text(
+                        "Iniciar sala",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
+                  ),
                 ],
               ),
             ),
@@ -368,10 +378,7 @@ class _ConfiguracionSalaPanelState extends State<ConfiguracionSalaPanel> {
         content: Text("Configuración guardada"),
         backgroundColor: Colors.green,
         duration: Duration(seconds: 2),
-        
-
       ),
     );
-    
   }
 }

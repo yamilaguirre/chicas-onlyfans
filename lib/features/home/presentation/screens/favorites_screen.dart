@@ -72,10 +72,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
               child: Center(
                 child: RichText(
                   text: const TextSpan(
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                     children: [
                       TextSpan(
                         text: 'Interactúa con tu ',
@@ -103,7 +100,11 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                     color: AppColors.textHint,
                     fontSize: 14,
                   ),
-                  prefixIcon: const Icon(Icons.search, color: AppColors.textHint, size: 20),
+                  prefixIcon: const Icon(
+                    Icons.search,
+                    color: AppColors.textHint,
+                    size: 20,
+                  ),
                   filled: true,
                   fillColor: AppColors.background,
                   border: OutlineInputBorder(
@@ -237,10 +238,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
         decoration: BoxDecoration(
           color: isSelected ? AppColors.primary : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: AppColors.primary,
-            width: 1.5,
-          ),
+          border: Border.all(color: AppColors.primary, width: 1.5),
         ),
         child: Text(
           label,
@@ -286,8 +284,8 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
-                color: item['type'] == 'EN VIVO' 
-                    ? Colors.red 
+                color: item['type'] == 'EN VIVO'
+                    ? Colors.red
                     : AppColors.primary,
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -317,10 +315,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.transparent,
-                    Colors.black.withOpacity(0.7),
-                  ],
+                  colors: [Colors.transparent, Colors.black.withOpacity(0.7)],
                 ),
               ),
               child: Column(
@@ -340,10 +335,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                   const SizedBox(height: 2),
                   Text(
                     item['subtitle'],
-                    style: const TextStyle(
-                      color: Colors.white70,
-                      fontSize: 11,
-                    ),
+                    style: const TextStyle(color: Colors.white70, fontSize: 11),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -411,14 +403,12 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.white.withOpacity(0.2) : Colors.transparent,
+          color: isSelected
+              ? Colors.white.withOpacity(0.2)
+              : Colors.transparent,
           shape: BoxShape.circle,
         ),
-        child: Icon(
-          icon,
-          color: Colors.white,
-          size: 28,
-        ),
+        child: Icon(icon, color: Colors.white, size: 28),
       ),
     );
   }

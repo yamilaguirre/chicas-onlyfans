@@ -10,7 +10,8 @@ class LoginWithPasswordScreen extends StatefulWidget {
   const LoginWithPasswordScreen({super.key});
 
   @override
-  State<LoginWithPasswordScreen> createState() => _LoginWithPasswordScreenState();
+  State<LoginWithPasswordScreen> createState() =>
+      _LoginWithPasswordScreenState();
 }
 
 class _LoginWithPasswordScreenState extends State<LoginWithPasswordScreen> {
@@ -36,8 +37,9 @@ class _LoginWithPasswordScreenState extends State<LoginWithPasswordScreen> {
 
   void _checkFields() {
     setState(() {
-      _isButtonEnabled = _phoneController.text.isNotEmpty && 
-                         _passwordController.text.isNotEmpty;
+      _isButtonEnabled =
+          _phoneController.text.isNotEmpty &&
+          _passwordController.text.isNotEmpty;
     });
   }
 
@@ -65,12 +67,10 @@ class _LoginWithPasswordScreenState extends State<LoginWithPasswordScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Back button
-                CustomBackButton(
-                  onPressed: () => Navigator.pop(context),
-                ),
-                
+                CustomBackButton(onPressed: () => Navigator.pop(context)),
+
                 const SizedBox(height: 32),
-                
+
                 // Título
                 const Text(
                   'Iniciar sesión',
@@ -80,9 +80,9 @@ class _LoginWithPasswordScreenState extends State<LoginWithPasswordScreen> {
                     color: AppColors.textPrimary,
                   ),
                 ),
-                
+
                 const SizedBox(height: 8),
-                
+
                 Text(
                   'Ingresa con tu número de celular y contraseña',
                   style: TextStyle(
@@ -90,9 +90,9 @@ class _LoginWithPasswordScreenState extends State<LoginWithPasswordScreen> {
                     color: AppColors.textSecondary,
                   ),
                 ),
-                
+
                 const SizedBox(height: 32),
-                
+
                 // Formulario
                 Form(
                   key: _formKey,
@@ -103,21 +103,29 @@ class _LoginWithPasswordScreenState extends State<LoginWithPasswordScreen> {
                         controller: _phoneController,
                         hintText: 'Número de celular',
                         keyboardType: TextInputType.phone,
-                        prefixIcon: const Icon(Icons.phone_android, color: AppColors.textSecondary),
+                        prefixIcon: const Icon(
+                          Icons.phone_android,
+                          color: AppColors.textSecondary,
+                        ),
                         validator: Validators.validatePhone,
                       ),
-                      
+
                       const SizedBox(height: 16),
-                      
+
                       // Campo de contraseña
                       CustomTextField(
                         controller: _passwordController,
                         hintText: 'Contraseña',
                         obscureText: _obscurePassword,
-                        prefixIcon: const Icon(Icons.lock_outline, color: AppColors.textSecondary),
+                        prefixIcon: const Icon(
+                          Icons.lock_outline,
+                          color: AppColors.textSecondary,
+                        ),
                         suffixIcon: IconButton(
                           icon: Icon(
-                            _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                            _obscurePassword
+                                ? Icons.visibility_off
+                                : Icons.visibility,
                             color: AppColors.textSecondary,
                           ),
                           onPressed: () {
@@ -136,9 +144,9 @@ class _LoginWithPasswordScreenState extends State<LoginWithPasswordScreen> {
                           return null;
                         },
                       ),
-                      
+
                       const SizedBox(height: 8),
-                      
+
                       // Olvidé mi contraseña
                       Align(
                         alignment: Alignment.centerRight,
@@ -147,7 +155,9 @@ class _LoginWithPasswordScreenState extends State<LoginWithPasswordScreen> {
                             // Navegar a recuperar contraseña
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Función de recuperar contraseña próximamente'),
+                                content: Text(
+                                  'Función de recuperar contraseña próximamente',
+                                ),
                               ),
                             );
                           },
@@ -160,17 +170,17 @@ class _LoginWithPasswordScreenState extends State<LoginWithPasswordScreen> {
                           ),
                         ),
                       ),
-                      
+
                       const SizedBox(height: 24),
-                      
+
                       // Botón de login
                       PrimaryButton(
                         text: 'Iniciar sesión',
                         onPressed: _isButtonEnabled ? _handleLogin : null,
                       ),
-                      
+
                       const SizedBox(height: 24),
-                      
+
                       // Link de registro
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -188,7 +198,8 @@ class _LoginWithPasswordScreenState extends State<LoginWithPasswordScreen> {
                               Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => const PhoneNumberScreen(),
+                                  builder: (context) =>
+                                      const PhoneNumberScreen(),
                                 ),
                               );
                             },

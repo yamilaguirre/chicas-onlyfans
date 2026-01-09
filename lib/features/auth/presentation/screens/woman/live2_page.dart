@@ -53,7 +53,12 @@ class _AjustesFinalesPanelState extends State<AjustesFinalesPanel> {
                   height: 1000,
                   padding: const EdgeInsets.all(22),
                   decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 66, 20, 90).withOpacity(0.95),
+                    color: const Color.fromARGB(
+                      255,
+                      66,
+                      20,
+                      90,
+                    ).withOpacity(0.95),
                     borderRadius: BorderRadius.circular(30),
                     boxShadow: [
                       BoxShadow(
@@ -198,6 +203,4 @@ class _AjustesFinalesPanelState extends State<AjustesFinalesPanel> {
       ),
     );
   }
-
- 
 }
