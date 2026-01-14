@@ -90,14 +90,12 @@ class AuthWrapper extends StatelessWidget {
                     userSnapshot.data!.data() as Map<String, dynamic>;
                 final userTypeStr = userData['userType'] as String?;
 
-                // Redirigir según tipo de usuario usando Modular
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  if (userTypeStr == 'female') {
-                    Modular.to.navigate('/female/contenido');
-                  } else {
-                    Modular.to.navigate('/male/home');
-                  }
-                });
+                // Redirigir según tipo de usuario
+                if (userTypeStr == 'female') {
+                  Modular.to.navigate('/female/contenido');
+                } else {
+                  Modular.to.navigate('/male/home');
+                }
 
                 return const Scaffold(
                   backgroundColor: Color(0xFF4A148C),
@@ -110,20 +108,14 @@ class AuthWrapper extends StatelessWidget {
               }
 
               // Usuario no existe en Firestore, ir a login
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                Modular.to.navigate('/');
-              });
-
+              Modular.to.navigate('/auth/sign-in');
               return const SizedBox.shrink();
             },
           );
         }
 
         // Si no hay usuario autenticado, redirigir al login
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          Modular.to.navigate('/');
-        });
-
+        Modular.to.navigate('/auth/sign-in');
         return const SizedBox.shrink();
       },
     );
