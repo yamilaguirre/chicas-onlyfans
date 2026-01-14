@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../../core/widgets/atoms/custom_button.dart';
-import 'phone_number_screen.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+import '../../../../core/enums/user_type.dart';
 
 class SignInScreen extends ConsumerWidget {
   const SignInScreen({super.key});
@@ -65,11 +65,9 @@ class SignInScreen extends ConsumerWidget {
                 backgroundColor: Colors.white,
                 textColor: Colors.black87,
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const PhoneNumberScreen(),
-                    ),
+                  Modular.to.pushNamed(
+                    '/auth/phone',
+                    arguments: {'isLogin': true},
                   );
                 },
               ),
@@ -79,16 +77,32 @@ class SignInScreen extends ConsumerWidget {
               // Texto de registro
               TextButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const PhoneNumberScreen(),
-                    ),
+                  Modular.to.pushNamed(
+                    '/auth/phone',
+                    arguments: {'userType': UserType.male, 'isLogin': false},
                   );
                 },
                 child: const Text(
                   '¿No tienes cuenta? Regístrate',
                   style: TextStyle(color: Colors.white, fontSize: 14),
+                ),
+              ),
+
+              // Texto de registro para creadoras
+              TextButton(
+                onPressed: () {
+                  Modular.to.pushNamed(
+                    '/auth/phone',
+                    arguments: {'userType': UserType.female, 'isLogin': false},
+                  );
+                },
+                child: const Text(
+                  '¿Eres creadora de contenido? Regístrate aquí',
+                  style: TextStyle(
+                    color: Color(0xFFE991C5),
+                    fontSize: 14,
+                    decoration: TextDecoration.underline,
+                  ),
                 ),
               ),
 

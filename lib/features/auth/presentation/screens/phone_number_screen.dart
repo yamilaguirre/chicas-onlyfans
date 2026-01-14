@@ -1,25 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/widgets/atoms/custom_back_button.dart';
 import '../../../../core/widgets/atoms/primary_button.dart';
 import '../../../../core/widgets/molecules/phone_input_field.dart';
-import 'verification_code_screen.dart';
+import '../../../../core/enums/user_type.dart';
+import '../controllers/auth_controller.dart';
 
-class PhoneNumberScreen extends StatefulWidget {
-  const PhoneNumberScreen({super.key});
+class PhoneNumberScreen extends ConsumerStatefulWidget {
+  final UserType userType;
+  final bool isLogin;
+
+  const PhoneNumberScreen({
+    super.key,
+    this.userType = UserType.male,
+    this.isLogin = false,
+  });
 
   @override
-  State<PhoneNumberScreen> createState() => _PhoneNumberScreenState();
+  ConsumerState<PhoneNumberScreen> createState() => _PhoneNumberScreenState();
 }
 
-class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
+class _PhoneNumberScreenState extends ConsumerState<PhoneNumberScreen> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _countryController = TextEditingController(
-    text: 'BOL',
-  );
   final TextEditingController _phoneController = TextEditingController();
   bool _isButtonEnabled = false;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -29,7 +37,6 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
 
   @override
   void dispose() {
-    _countryController.dispose();
     _phoneController.dispose();
     super.dispose();
   }
@@ -40,24 +47,54 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
     });
   }
 
-  void _handleContinue() {
-    if (_formKey.currentState!.validate()) {
-      // Simular envío de código
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Código enviado a ${_phoneController.text}'),
-          backgroundColor: AppColors.success,
-        ),
-      );
+  void _handleContinue() async {
+    if (_formKey.currentState!.validate() && !_isLoading) {
+      setState(() {
+        _isLoading = true;
+      });
 
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => VerificationCodeScreen(
-            phoneNumber: '${_countryController.text} ${_phoneController.text}',
-          ),
-        ),
-      );
+      try {
+        final phoneNumber = _phoneController.text;
+        final verificationId = await ref
+            .read(authControllerProvider.notifier)
+            .sendPhoneOTP(phoneNumber);
+
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Código enviado a +591 $phoneNumber'),
+              backgroundColor: AppColors.success,
+            ),
+          );
+
+          Modular.to.pushNamed(
+            '/auth/verification',
+            arguments: {
+              'phoneNumber': phoneNumber,
+              'verificationId': verificationId,
+              'userType': widget.userType,
+              'isLogin': widget.isLogin,
+            },
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error: ${e.toString()}'),
+              backgroundColor: AppColors.error,
+            ),
+          );
+        }
+      }
     }
   }
 
@@ -94,7 +131,6 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
 
                 // Campo de teléfono con validación
                 PhoneInputField(
-                  countryController: _countryController,
                   phoneController: _phoneController,
                   onPhoneChanged: (value) => _validateForm(),
                 ),
@@ -115,8 +151,10 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
 
                 // Botón continuar
                 PrimaryButton(
-                  text: AppStrings.continueButton,
-                  onPressed: _isButtonEnabled ? _handleContinue : null,
+                  text: _isLoading ? 'Enviando...' : AppStrings.continueButton,
+                  onPressed: (_isButtonEnabled && !_isLoading)
+                      ? _handleContinue
+                      : null,
                 ),
 
                 const SizedBox(height: 48),

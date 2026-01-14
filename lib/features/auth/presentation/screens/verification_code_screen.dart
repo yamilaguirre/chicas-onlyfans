@@ -1,25 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/widgets/atoms/custom_back_button.dart';
 import '../../../../core/widgets/atoms/primary_button.dart';
 import '../../../../core/utils/validators.dart';
-import 'name_screen.dart';
+import '../../../../core/enums/user_type.dart';
+import '../controllers/auth_controller.dart';
+import '../controllers/auth_state.dart';
 
-class VerificationCodeScreen extends StatefulWidget {
+class VerificationCodeScreen extends ConsumerStatefulWidget {
   final String phoneNumber;
+  final String verificationId;
+  final UserType userType;
+  final bool isLogin;
 
-  const VerificationCodeScreen({super.key, required this.phoneNumber});
+  const VerificationCodeScreen({
+    super.key,
+    required this.phoneNumber,
+    required this.verificationId,
+    this.userType = UserType.male,
+    this.isLogin = false,
+  });
 
   @override
-  State<VerificationCodeScreen> createState() => _VerificationCodeScreenState();
+  ConsumerState<VerificationCodeScreen> createState() =>
+      _VerificationCodeScreenState();
 }
 
-class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
+class _VerificationCodeScreenState
+    extends ConsumerState<VerificationCodeScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _codeController = TextEditingController();
   bool _isButtonEnabled = false;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -39,22 +56,114 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
     });
   }
 
-  void _handleContinue() {
-    if (_formKey.currentState!.validate()) {
-      // Simular verificación exitosa
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Código verificado correctamente'),
-          backgroundColor: AppColors.success,
-        ),
-      );
+  void _handleContinue() async {
+    if (_formKey.currentState!.validate() && !_isLoading) {
+      setState(() {
+        _isLoading = true;
+      });
 
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => NameScreen(phoneNumber: widget.phoneNumber),
-        ),
-      );
+      try {
+        await ref
+            .read(authControllerProvider.notifier)
+            .verifyPhoneOTP(
+              verificationId: widget.verificationId,
+              otp: _codeController.text,
+              phoneNumber: widget.phoneNumber,
+            );
+
+        if (!mounted) return;
+
+        // Verificar si es login o registro
+        if (widget.isLogin) {
+          // LOGIN: Verificar si el usuario existe en Firestore
+          final authState = ref.read(authControllerProvider);
+
+          if (authState is AuthStateAuthenticated) {
+            final userId = authState.user.id;
+
+            // Obtener datos del usuario de Firestore
+            final userDoc = await FirebaseFirestore.instance
+                .collection('users')
+                .doc(userId)
+                .get();
+
+            if (!mounted) return;
+
+            if (userDoc.exists) {
+              // Usuario existe, obtener su tipo
+              final userData = userDoc.data()!;
+              final userTypeStr = userData['userType'] as String?;
+              final userType = userTypeStr == 'female'
+                  ? UserType.female
+                  : UserType.male;
+
+              // Redirigir según tipo de usuario - LOGIN EXITOSO
+              if (userType == UserType.female) {
+                // Creadora -> Contenido Screen
+                Modular.to.navigate('/female/contenido');
+              } else {
+                // Hombre/Suscriptor -> Home Screen
+                Modular.to.navigate('/male/home');
+              }
+            } else {
+              // Usuario no existe en Firestore, eliminar de Auth y mostrar error
+              setState(() {
+                _isLoading = false;
+              });
+
+              await ref.read(authControllerProvider.notifier).logout();
+
+              if (!mounted) return;
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text(
+                    'Usuario no encontrado. Por favor regístrate primero.',
+                  ),
+                  backgroundColor: AppColors.error,
+                  duration: Duration(seconds: 4),
+                ),
+              );
+
+              // Volver a la pantalla de sign in
+              Navigator.of(context).popUntil((route) => route.isFirst);
+            }
+          }
+        } else {
+          // REGISTRO: Continuar al flujo de crear perfil
+          setState(() {
+            _isLoading = false;
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Código verificado correctamente'),
+              backgroundColor: AppColors.success,
+            ),
+          );
+
+          Modular.to.pushNamed(
+            '/auth/name',
+            arguments: {
+              'phoneNumber': widget.phoneNumber,
+              'userType': widget.userType,
+            },
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error: ${e.toString()}'),
+              backgroundColor: AppColors.error,
+            ),
+          );
+        }
+      }
     }
   }
 
@@ -91,7 +200,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
 
                 // Mensaje con número de teléfono
                 Text(
-                  'Código enviado a ${widget.phoneNumber}',
+                  'Código enviado a +591 ${widget.phoneNumber}',
                   style: TextStyle(
                     fontSize: 14,
                     color: AppColors.textSecondary,
@@ -174,8 +283,12 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
 
                 // Botón continuar
                 PrimaryButton(
-                  text: AppStrings.continueButton,
-                  onPressed: _isButtonEnabled ? _handleContinue : null,
+                  text: _isLoading
+                      ? 'Verificando...'
+                      : AppStrings.continueButton,
+                  onPressed: (_isButtonEnabled && !_isLoading)
+                      ? _handleContinue
+                      : null,
                 ),
 
                 const SizedBox(height: 48),

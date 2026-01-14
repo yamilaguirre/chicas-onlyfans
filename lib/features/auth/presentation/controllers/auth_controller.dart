@@ -17,20 +17,20 @@ class AuthController extends _$AuthController {
   @override
   AuthState build() {
     _authRepository = ref.watch(authRepositoryProvider);
-    return const AuthState.initial();
+    return const AuthStateInitial();
   }
 
   Future<String> sendPhoneOTP(String phoneNumber) async {
-    state = const AuthState.loading();
+    state = const AuthStateLoading();
     try {
       final phoneWithCode = phoneNumber.startsWith('+')
           ? phoneNumber
           : '+591$phoneNumber';
       final verificationId = await _authRepository.sendPhoneOTP(phoneWithCode);
-      state = const AuthState.initial();
+      state = const AuthStateInitial();
       return verificationId;
     } catch (e) {
-      state = AuthState.error(e.toString());
+      state = AuthStateError(e.toString());
       rethrow;
     }
   }
@@ -40,7 +40,7 @@ class AuthController extends _$AuthController {
     required String otp,
     required String phoneNumber,
   }) async {
-    state = const AuthState.loading();
+    state = const AuthStateLoading();
     try {
       final phoneWithCode = phoneNumber.startsWith('+')
           ? phoneNumber
@@ -61,12 +61,12 @@ class AuthController extends _$AuthController {
           birthDate: DateTime.now(),
           isVerified: firebaseUser.emailVerified,
         );
-        state = AuthState.authenticated(user);
+        state = AuthStateAuthenticated(user);
       } else {
-        state = const AuthState.error('Error en autenticación');
+        state = const AuthStateError('Error en autenticación');
       }
     } catch (e) {
-      state = AuthState.error(e.toString());
+      state = AuthStateError(e.toString());
       rethrow;
     }
   }
@@ -74,9 +74,34 @@ class AuthController extends _$AuthController {
   Future<void> logout() async {
     try {
       await _authRepository.signOut();
-      state = const AuthState.unauthenticated();
+      state = const AuthStateUnauthenticated();
     } catch (e) {
-      state = AuthState.error(e.toString());
+      state = AuthStateError(e.toString());
+    }
+  }
+
+  Future<void> updateProfile({
+    required String name,
+    required String username,
+    required DateTime birthDate,
+    String? email,
+    String? photoUrl,
+  }) async {
+    try {
+      final user = _authRepository.getCurrentUser();
+      if (user != null) {
+        await _authRepository.updateUserProfile(
+          userId: user.uid,
+          name: name,
+          username: username,
+          birthDate: birthDate,
+          email: email,
+          photoUrl: photoUrl,
+        );
+      }
+    } catch (e) {
+      state = AuthStateError(e.toString());
+      rethrow;
     }
   }
 }

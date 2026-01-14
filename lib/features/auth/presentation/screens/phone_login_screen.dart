@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../controllers/auth_controller.dart';
+import '../controllers/auth_state.dart';
 
 class PhoneLoginScreen extends ConsumerStatefulWidget {
   const PhoneLoginScreen({super.key});
@@ -164,28 +165,24 @@ class _PhoneLoginScreenState extends ConsumerState<PhoneLoginScreen> {
                   ),
                   const SizedBox(height: 32),
                   ElevatedButton(
-                    onPressed: authState.maybeWhen(
-                      loading: () => null,
-                      orElse: () => _sendOTP,
-                    ),
+                    onPressed: authState is AuthStateLoading ? null : _sendOTP,
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       backgroundColor: Colors.blue,
                       foregroundColor: Colors.white,
                     ),
-                    child: authState.maybeWhen(
-                      loading: () => const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            Colors.white,
-                          ),
-                        ),
-                      ),
-                      orElse: () => const Text('Enviar Código'),
-                    ),
+                    child: authState is AuthStateLoading
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.white,
+                              ),
+                            ),
+                          )
+                        : const Text('Enviar Código'),
                   ),
                 ] else ...[
                   Text(
@@ -213,28 +210,26 @@ class _PhoneLoginScreenState extends ConsumerState<PhoneLoginScreen> {
                   ),
                   const SizedBox(height: 32),
                   ElevatedButton(
-                    onPressed: authState.maybeWhen(
-                      loading: () => null,
-                      orElse: () => _verifyOTP,
-                    ),
+                    onPressed: authState is AuthStateLoading
+                        ? null
+                        : _verifyOTP,
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       backgroundColor: Colors.blue,
                       foregroundColor: Colors.white,
                     ),
-                    child: authState.maybeWhen(
-                      loading: () => const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            Colors.white,
-                          ),
-                        ),
-                      ),
-                      orElse: () => const Text('Verificar Código'),
-                    ),
+                    child: authState is AuthStateLoading
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.white,
+                              ),
+                            ),
+                          )
+                        : const Text('Verificar Código'),
                   ),
                   const SizedBox(height: 16),
                   TextButton(

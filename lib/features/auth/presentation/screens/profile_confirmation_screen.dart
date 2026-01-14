@@ -1,21 +1,24 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/atoms/custom_back_button.dart';
 import '../../../../core/widgets/atoms/primary_button.dart';
-import 'follow_profiles_screen.dart';
+import '../../../../core/enums/user_type.dart';
 
 class ProfileConfirmationScreen extends StatefulWidget {
   final String phoneNumber;
   final String name;
   final DateTime birthDate;
+  final UserType userType;
 
   const ProfileConfirmationScreen({
     super.key,
     required this.phoneNumber,
     required this.name,
     required this.birthDate,
+    this.userType = UserType.male,
   });
 
   @override
@@ -71,15 +74,16 @@ class _ProfileConfirmationScreenState extends State<ProfileConfirmationScreen> {
   }
 
   void _handleContinue() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => FollowProfilesScreen(
-          phoneNumber: widget.phoneNumber,
-          name: _nameController.text,
-          birthDate: _birthDateController.text,
-        ),
-      ),
+    Modular.to.pushNamed(
+      '/auth/follow-profiles',
+      arguments: {
+        'phoneNumber': widget.phoneNumber,
+        'name': _nameController.text,
+        'username': _usernameController.text,
+        'birthDate': _birthDateController.text,
+        'email': _emailController.text.isEmpty ? null : _emailController.text,
+        'userType': widget.userType,
+      },
     );
   }
 

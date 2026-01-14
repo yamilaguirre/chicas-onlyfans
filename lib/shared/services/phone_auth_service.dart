@@ -6,6 +6,16 @@ class PhoneAuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  /// Verifica si un usuario existe en Firestore por su UID
+  Future<bool> checkUserExists(String uid) async {
+    try {
+      final doc = await _firestore.collection('users').doc(uid).get();
+      return doc.exists;
+    } catch (e) {
+      return false;
+    }
+  }
+
   Future<String> sendOTP(String phoneNumber) async {
     final Completer<String> completer = Completer<String>();
 
@@ -124,6 +134,29 @@ class PhoneAuthService {
 
   User? getCurrentUser() {
     return _auth.currentUser;
+  }
+
+  Future<void> updateUserProfile({
+    required String userId,
+    required String name,
+    required String username,
+    required DateTime birthDate,
+    String? email,
+    String? photoUrl,
+  }) async {
+    try {
+      await _firestore.collection('users').doc(userId).update({
+        'name': name,
+        'username': username,
+        'birthDate': birthDate.toIso8601String(),
+        'email': email,
+        'photoUrl': photoUrl,
+        'isVerified': true,
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      throw Exception('Error actualizando perfil: $e');
+    }
   }
 
   Future<void> signOut() async {

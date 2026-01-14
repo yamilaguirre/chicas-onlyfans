@@ -1,29 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/widgets/atoms/custom_back_button.dart';
 import '../../../../core/widgets/atoms/primary_button.dart';
-import '../../../home/presentation/screens/home_screen.dart';
+import '../../../../core/enums/user_type.dart';
+import '../controllers/auth_controller.dart';
 
-class FollowProfilesScreen extends StatefulWidget {
+class FollowProfilesScreen extends ConsumerStatefulWidget {
   final String phoneNumber;
   final String name;
+  final String username;
   final String birthDate;
+  final String? email;
+  final UserType userType;
 
   const FollowProfilesScreen({
     super.key,
     required this.phoneNumber,
     required this.name,
+    required this.username,
     required this.birthDate,
+    this.email,
+    this.userType = UserType.male,
   });
 
   @override
-  State<FollowProfilesScreen> createState() => _FollowProfilesScreenState();
+  ConsumerState<FollowProfilesScreen> createState() =>
+      _FollowProfilesScreenState();
 }
 
-class _FollowProfilesScreenState extends State<FollowProfilesScreen> {
+class _FollowProfilesScreenState extends ConsumerState<FollowProfilesScreen> {
   final TextEditingController _searchController = TextEditingController();
   final Set<int> _followingIds = {};
+  bool _isLoading = false;
 
   // Lista de perfiles sugeridos
   final List<Map<String, dynamic>> _profiles = [
@@ -81,13 +92,57 @@ class _FollowProfilesScreenState extends State<FollowProfilesScreen> {
     });
   }
 
-  void _handleContinue() {
-    // Navegar a la pantalla de inicio
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (context) => const HomeScreen()),
-      (route) => false, // Elimina todas las rutas anteriores
-    );
+  void _handleContinue() async {
+    if (_isLoading) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // Parsear la fecha de cumpleaños
+      final parts = widget.birthDate.split('/');
+      DateTime birthDate = DateTime.now();
+      if (parts.length == 3) {
+        birthDate = DateTime(
+          int.parse(parts[2]), // año
+          int.parse(parts[1]), // mes
+          int.parse(parts[0]), // día
+        );
+      }
+
+      // Guardar el perfil completo del usuario
+      await ref
+          .read(authControllerProvider.notifier)
+          .updateProfile(
+            name: widget.name,
+            username: widget.username,
+            birthDate: birthDate,
+            email: widget.email,
+          );
+
+      if (mounted) {
+        // Navegar a la pantalla de inicio eliminando todo el historial
+        if (widget.userType == UserType.female) {
+          Modular.to.navigate('/female/contenido');
+        } else {
+          Modular.to.navigate('/male/home');
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error al guardar perfil: ${e.toString()}'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -261,8 +316,8 @@ class _FollowProfilesScreenState extends State<FollowProfilesScreen> {
             Padding(
               padding: const EdgeInsets.all(24.0),
               child: PrimaryButton(
-                text: AppStrings.continueButton,
-                onPressed: _handleContinue,
+                text: _isLoading ? 'Guardando...' : AppStrings.continueButton,
+                onPressed: _isLoading ? null : _handleContinue,
               ),
             ),
           ],

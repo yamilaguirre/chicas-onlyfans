@@ -20,17 +20,27 @@ class PhoneInputField extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Country code field
-        SizedBox(
-          width: 100,
-          child: TextFormField(
-            controller: countryController,
-            onChanged: onCountryChanged,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-            decoration: const InputDecoration(hintText: 'BOL', counterText: ''),
-            maxLength: 5,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'[A-Z]')),
+        // Country code field - Fijo con bandera de Bolivia y código
+        Container(
+          width: 110,
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey.shade300),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: const Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('🇧🇴', style: TextStyle(fontSize: 24)),
+              SizedBox(width: 8),
+              Text(
+                '+591',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black87,
+                ),
+              ),
             ],
           ),
         ),
@@ -42,15 +52,25 @@ class PhoneInputField extends StatelessWidget {
             onChanged: onPhoneChanged,
             keyboardType: TextInputType.phone,
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-            maxLength: 15,
+            maxLength: 8,
             inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'[0-9+\s]')),
-              LengthLimitingTextInputFormatter(15),
+              FilteringTextInputFormatter.digitsOnly,
+              LengthLimitingTextInputFormatter(8),
             ],
             decoration: const InputDecoration(
-              hintText: '+5921 000000000',
+              hintText: '70000000',
               counterText: '',
+              border: OutlineInputBorder(),
             ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Ingresa tu número de teléfono';
+              }
+              if (value.length < 8) {
+                return 'El número debe tener 8 dígitos';
+              }
+              return null;
+            },
           ),
         ),
       ],

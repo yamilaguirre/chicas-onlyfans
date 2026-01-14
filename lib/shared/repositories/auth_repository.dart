@@ -26,6 +26,28 @@ class AuthRepository {
     return _phoneAuthService.getCurrentUser();
   }
 
+  Future<bool> checkUserExists(String uid) async {
+    return await _phoneAuthService.checkUserExists(uid);
+  }
+
+  Future<void> updateUserProfile({
+    required String userId,
+    required String name,
+    required String username,
+    required DateTime birthDate,
+    String? email,
+    String? photoUrl,
+  }) async {
+    await _phoneAuthService.updateUserProfile(
+      userId: userId,
+      name: name,
+      username: username,
+      birthDate: birthDate,
+      email: email,
+      photoUrl: photoUrl,
+    );
+  }
+
   Future<void> signOut() async {
     await _phoneAuthService.signOut();
   }

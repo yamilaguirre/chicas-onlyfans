@@ -1,15 +1,17 @@
 // filepath: d:\OnlyFansApp_Chasky\chicas-onlyfans\lib\features\profile\presentation\screens\profile_screen.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../packages/presentation/screens/packages_screen.dart';
 import '../../../chat/presentation/screens/chats_screen.dart';
 import '../../../home/presentation/screens/favorites_screen.dart';
+import '../../../auth/presentation/controllers/auth_controller.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -41,7 +43,7 @@ class ProfileScreen extends StatelessWidget {
                     const SizedBox(height: 20),
 
                     // Seguridad y Privacidad
-                    _buildSecuritySection(),
+                    _buildSecuritySection(ref),
 
                     const SizedBox(height: 100), // Espacio para el menú
                   ],
@@ -716,83 +718,138 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSecuritySection() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Seguridad y Privacidad',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF333333),
-            ),
-          ),
-          const SizedBox(height: 16),
+  Widget _buildSecuritySection(WidgetRef ref) {
+    return Builder(
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Seguridad y Privacidad',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF333333),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  children: [
+                    _buildMenuItem(Icons.lock_outline, 'Cambiar contraseña'),
+                    const SizedBox(height: 8),
+                    _buildMenuItem(
+                      Icons.verified_user_outlined,
+                      'Verificación en dos pasos',
+                    ),
+                    const SizedBox(height: 8),
+                    _buildMenuItem(
+                      Icons.camera_alt_outlined,
+                      'Permisos de cámara',
+                    ),
+                    const SizedBox(height: 8),
+                    _buildMenuItem(Icons.mic_outlined, 'Permisos de micrófono'),
+                    const Divider(height: 24),
+                    _buildMenuItem(
+                      Icons.logout,
+                      'Cerrar sesión',
+                      color: Colors.red,
+                      onTap: () async {
+                        // Mostrar diálogo de confirmación
+                        final shouldLogout = await showDialog<bool>(
+                          context: context,
+                          builder: (BuildContext dialogContext) {
+                            return AlertDialog(
+                              title: const Text('Cerrar sesión'),
+                              content: const Text(
+                                '¿Seguro que quieres cerrar sesión?',
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () =>
+                                      Navigator.of(dialogContext).pop(false),
+                                  child: const Text('No'),
+                                ),
+                                TextButton(
+                                  onPressed: () =>
+                                      Navigator.of(dialogContext).pop(true),
+                                  style: TextButton.styleFrom(
+                                    foregroundColor: Colors.red,
+                                  ),
+                                  child: const Text('Sí'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
 
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 2),
+                        // Si el usuario confirmó, cerrar sesión
+                        if (shouldLogout == true) {
+                          await ref
+                              .read(authControllerProvider.notifier)
+                              .logout();
+                        }
+                      },
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                _buildMenuItem(Icons.lock_outline, 'Cambiar contraseña'),
-                const SizedBox(height: 8),
-                _buildMenuItem(
-                  Icons.verified_user_outlined,
-                  'Verificación en dos pasos',
-                ),
-                const SizedBox(height: 8),
-                _buildMenuItem(Icons.camera_alt_outlined, 'Permisos de cámara'),
-                const SizedBox(height: 8),
-                _buildMenuItem(Icons.mic_outlined, 'Permisos de micrófono'),
-                const Divider(height: 24),
-                _buildMenuItem(
-                  Icons.logout,
-                  'Cerrar sesión',
-                  color: Colors.red,
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
-  Widget _buildMenuItem(IconData icon, String title, {Color? color}) {
-    return InkWell(
-      onTap: () {},
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        child: Row(
-          children: [
-            Icon(icon, color: color ?? const Color(0xFFE991C5), size: 20),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                title,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: color ?? const Color(0xFF333333),
+  Widget _buildMenuItem(
+    IconData icon,
+    String title, {
+    Color? color,
+    VoidCallback? onTap,
+  }) {
+    return Builder(
+      builder: (context) {
+        return InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Row(
+              children: [
+                Icon(icon, color: color ?? const Color(0xFFE991C5), size: 20),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: color ?? const Color(0xFF333333),
+                    ),
+                  ),
                 ),
-              ),
+                Icon(
+                  Icons.chevron_right,
+                  color: const Color(0xFFCCCCCC),
+                  size: 20,
+                ),
+              ],
             ),
-            Icon(Icons.chevron_right, color: const Color(0xFFCCCCCC), size: 20),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
