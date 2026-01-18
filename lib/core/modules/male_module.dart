@@ -6,6 +6,7 @@ import '../../features/chat/presentation/screens/chats_screen.dart';
 import '../../features/chat/presentation/screens/chat_detail_screen.dart';
 import '../../features/packages/presentation/screens/packages_screen.dart';
 import '../guards/auth_guard.dart';
+import '../layouts/male_layout.dart';
 
 /// Módulo para usuarios hombres/suscriptores
 class MaleModule extends Module {
@@ -16,36 +17,31 @@ class MaleModule extends Module {
 
   @override
   void routes(r) {
-    // Pantalla principal home
+    // Layout Shell - Envuelve todas las rutas principales del módulo
     r.child(
-      '/home',
-      child: (context) => const HomeScreen(),
-      transition: TransitionType.fadeIn,
+      Modular.initialRoute,
+      child: (context) => const MaleLayout(child: RouterOutlet()),
       guards: [AuthGuard(requiredType: 'male')],
+      children: [
+        // Rutas con navegación persistente (bottom nav)
+        ParallelRoute.child('/home', child: (context) => const HomeScreen()),
+        ParallelRoute.child(
+          '/favorites',
+          child: (context) => const FavoritesScreen(),
+        ),
+        ParallelRoute.child('/chats', child: (context) => const ChatsScreen()),
+        ParallelRoute.child(
+          '/packages',
+          child: (context) => const PackagesScreen(),
+        ),
+        ParallelRoute.child(
+          '/profile',
+          child: (context) => const ProfileScreen(),
+        ),
+      ],
     );
 
-    // Pantalla de favoritos
-    r.child(
-      '/favorites',
-      child: (context) => const FavoritesScreen(),
-      guards: [AuthGuard(requiredType: 'male')],
-    );
-
-    // Pantalla de perfil
-    r.child(
-      '/profile',
-      child: (context) => const ProfileScreen(),
-      guards: [AuthGuard(requiredType: 'male')],
-    );
-
-    // Pantalla de chats
-    r.child(
-      '/chats',
-      child: (context) => const ChatsScreen(),
-      guards: [AuthGuard(requiredType: 'male')],
-    );
-
-    // Pantalla de detalle de chat
+    // Rutas fuera del layout (sin bottom nav)
     r.child(
       '/chats/:chatId',
       child: (context) => ChatDetailScreen(
@@ -53,13 +49,6 @@ class MaleModule extends Module {
         avatar: r.args.data['avatar'] ?? '',
         isOnline: r.args.data['isOnline'] ?? false,
       ),
-      guards: [AuthGuard(requiredType: 'male')],
-    );
-
-    // Pantalla de paquetes/compra de minutos
-    r.child(
-      '/packages',
-      child: (context) => const PackagesScreen(),
       guards: [AuthGuard(requiredType: 'male')],
     );
 
