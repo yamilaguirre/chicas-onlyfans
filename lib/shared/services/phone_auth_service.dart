@@ -117,9 +117,12 @@ class PhoneAuthService {
           });
         }
       } else {
+        // Usuario completamente nuevo - guardar con tipo indefinido
         await _firestore.collection('users').doc(user.uid).set({
           'uid': user.uid,
           'phoneNumber': phoneWithCode,
+          'type': 'indefinido',
+          'userType': 'indefinido',
           'createdAt': FieldValue.serverTimestamp(),
           'updatedAt': FieldValue.serverTimestamp(),
           'lastLogin': FieldValue.serverTimestamp(),
@@ -156,6 +159,22 @@ class PhoneAuthService {
       });
     } catch (e) {
       throw Exception('Error actualizando perfil: $e');
+    }
+  }
+
+  /// Guarda el tipo de usuario (male o female) en Firestore
+  Future<void> saveUserType({
+    required String userId,
+    required String userType,
+  }) async {
+    try {
+      await _firestore.collection('users').doc(userId).update({
+        'type': userType,
+        'userType': userType,
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      throw Exception('Error guardando tipo de usuario: $e');
     }
   }
 

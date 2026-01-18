@@ -80,6 +80,21 @@ class AuthController extends _$AuthController {
     }
   }
 
+  Future<void> saveUserType(String userType) async {
+    try {
+      final user = _authRepository.getCurrentUser();
+      if (user != null) {
+        await _authRepository.saveUserType(
+          userId: user.uid,
+          userType: userType,
+        );
+      }
+    } catch (e) {
+      state = AuthStateError(e.toString());
+      rethrow;
+    }
+  }
+
   Future<void> updateProfile({
     required String name,
     required String username,

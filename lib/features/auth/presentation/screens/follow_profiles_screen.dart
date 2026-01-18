@@ -122,12 +122,20 @@ class _FollowProfilesScreenState extends ConsumerState<FollowProfilesScreen> {
           );
 
       if (mounted) {
-        // Navegar a la pantalla de inicio eliminando todo el historial
-        if (widget.userType == UserType.female) {
-          Modular.to.navigate('/female/contenido');
-        } else {
-          Modular.to.navigate('/male/home');
-        }
+        // Mostrar mensaje de éxito
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('¡Registro completado! Ahora puedes iniciar sesión'),
+            backgroundColor: AppColors.success,
+            duration: Duration(seconds: 3),
+          ),
+        );
+
+        // Cerrar sesión y redirigir al login
+        await ref.read(authControllerProvider.notifier).logout();
+
+        // Navegar al login eliminando todo el historial
+        Modular.to.navigate('/auth/sign-in');
       }
     } catch (e) {
       if (mounted) {

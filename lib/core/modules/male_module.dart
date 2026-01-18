@@ -5,7 +5,7 @@ import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../features/chat/presentation/screens/chats_screen.dart';
 import '../../features/chat/presentation/screens/chat_detail_screen.dart';
 import '../../features/packages/presentation/screens/packages_screen.dart';
-import '../../features/videocall/presentation/screens/videocall_screen.dart';
+import '../guards/auth_guard.dart';
 
 /// Módulo para usuarios hombres/suscriptores
 class MaleModule extends Module {
@@ -21,16 +21,29 @@ class MaleModule extends Module {
       '/home',
       child: (context) => const HomeScreen(),
       transition: TransitionType.fadeIn,
+      guards: [AuthGuard(requiredType: 'male')],
     );
 
     // Pantalla de favoritos
-    r.child('/favorites', child: (context) => const FavoritesScreen());
+    r.child(
+      '/favorites',
+      child: (context) => const FavoritesScreen(),
+      guards: [AuthGuard(requiredType: 'male')],
+    );
 
     // Pantalla de perfil
-    r.child('/profile', child: (context) => const ProfileScreen());
+    r.child(
+      '/profile',
+      child: (context) => const ProfileScreen(),
+      guards: [AuthGuard(requiredType: 'male')],
+    );
 
     // Pantalla de chats
-    r.child('/chats', child: (context) => const ChatsScreen());
+    r.child(
+      '/chats',
+      child: (context) => const ChatsScreen(),
+      guards: [AuthGuard(requiredType: 'male')],
+    );
 
     // Pantalla de detalle de chat
     r.child(
@@ -40,10 +53,15 @@ class MaleModule extends Module {
         avatar: r.args.data['avatar'] ?? '',
         isOnline: r.args.data['isOnline'] ?? false,
       ),
+      guards: [AuthGuard(requiredType: 'male')],
     );
 
     // Pantalla de paquetes/compra de minutos
-    r.child('/packages', child: (context) => const PackagesScreen());
+    r.child(
+      '/packages',
+      child: (context) => const PackagesScreen(),
+      guards: [AuthGuard(requiredType: 'male')],
+    );
 
     // Pantalla de videollamada (comentado hasta implementar)
     // r.child(

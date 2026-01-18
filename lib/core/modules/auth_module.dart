@@ -6,8 +6,10 @@ import '../../features/auth/presentation/screens/name_screen.dart';
 import '../../features/auth/presentation/screens/birth_date_screen.dart';
 import '../../features/auth/presentation/screens/profile_confirmation_screen.dart';
 import '../../features/auth/presentation/screens/follow_profiles_screen.dart';
+import '../../features/auth/presentation/screens/role_selection_screen.dart';
 import '../../shared/repositories/auth_repository.dart';
 import '../../shared/services/phone_auth_service.dart';
+import '../enums/user_type.dart';
 
 /// Módulo de autenticación
 class AuthModule extends Module {
@@ -24,11 +26,14 @@ class AuthModule extends Module {
     // Pantalla de inicio de sesión
     r.child('/sign-in', child: (context) => const SignInScreen());
 
+    // Pantalla de selección de rol/tipo de usuario
+    r.child('/select-role', child: (context) => const RoleSelectionScreen());
+
     // Pantalla de ingreso de número telefónico
     r.child(
       '/phone',
       child: (context) => PhoneNumberScreen(
-        userType: r.args.data['userType'],
+        userType: r.args.data['userType'] ?? UserType.male,
         isLogin: r.args.data['isLogin'] ?? false,
       ),
     );

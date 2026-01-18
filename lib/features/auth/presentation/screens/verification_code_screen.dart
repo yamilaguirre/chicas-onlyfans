@@ -75,7 +75,7 @@ class _VerificationCodeScreenState
 
         // Verificar si es login o registro
         if (widget.isLogin) {
-          // LOGIN: Verificar si el usuario existe en Firestore
+          // LOGIN: Navegar a select-role, el AuthWrapper/AuthGuard se encargarán del resto
           final authState = ref.read(authControllerProvider);
 
           if (authState is AuthStateAuthenticated) {
@@ -92,18 +92,23 @@ class _VerificationCodeScreenState
             if (userDoc.exists) {
               // Usuario existe, obtener su tipo
               final userData = userDoc.data()!;
-              final userTypeStr = userData['userType'] as String?;
-              final userType = userTypeStr == 'female'
-                  ? UserType.female
-                  : UserType.male;
+              final userTypeStr =
+                  (userData['type'] ?? userData['userType']) as String?;
 
-              // Redirigir según tipo de usuario - LOGIN EXITOSO
-              if (userType == UserType.female) {
-                // Creadora -> Contenido Screen
-                Modular.to.navigate('/female/contenido');
+              // Si el tipo es indefinido o null, navegar a select-role
+              if (userTypeStr == null || userTypeStr == 'indefinido') {
+                Modular.to.navigate('/auth/select-role');
               } else {
-                // Hombre/Suscriptor -> Home Screen
-                Modular.to.navigate('/male/home');
+                // Tipo ya definido, redirigir según tipo
+                final userType = userTypeStr == 'female'
+                    ? UserType.female
+                    : UserType.male;
+
+                if (userType == UserType.female) {
+                  Modular.to.navigate('/female/contenido');
+                } else {
+                  Modular.to.navigate('/male/home');
+                }
               }
             } else {
               // Usuario no existe en Firestore, eliminar de Auth y mostrar error
@@ -130,7 +135,18 @@ class _VerificationCodeScreenState
             }
           }
         } else {
-          // REGISTRO: Continuar al flujo de crear perfil
+          // REGISTRO: Guardar el tipo de usuario y continuar al flujo de crear perfil
+          final authState = ref.read(authControllerProvider);
+          if (authState is AuthStateAuthenticated) {
+            // Guardar el type del usuario
+            final userTypeStr = widget.userType == UserType.female
+                ? 'female'
+                : 'male';
+            await ref
+                .read(authControllerProvider.notifier)
+                .saveUserType(userTypeStr);
+          }
+
           setState(() {
             _isLoading = false;
           });

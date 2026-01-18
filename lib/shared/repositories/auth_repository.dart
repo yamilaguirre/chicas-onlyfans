@@ -51,4 +51,11 @@ class AuthRepository {
   Future<void> signOut() async {
     await _phoneAuthService.signOut();
   }
+
+  Future<void> saveUserType({
+    required String userId,
+    required String userType,
+  }) async {
+    await _phoneAuthService.saveUserType(userId: userId, userType: userType);
+  }
 }

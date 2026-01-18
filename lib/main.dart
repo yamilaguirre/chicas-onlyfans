@@ -7,8 +7,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'firebase_options.dart';
 import 'core/theme/app_theme.dart';
-import 'core/enums/user_type.dart';
 import 'app_module.dart';
+import 'features/auth/presentation/screens/sign_in_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -88,14 +88,25 @@ class AuthWrapper extends StatelessWidget {
               if (userSnapshot.hasData && userSnapshot.data!.exists) {
                 final userData =
                     userSnapshot.data!.data() as Map<String, dynamic>;
-                final userTypeStr = userData['userType'] as String?;
+                // Leer primero el campo 'type', si no existe usar 'userType'
+                final userTypeStr =
+                    (userData['type'] ?? userData['userType']) as String?;
 
-                // Redirigir según tipo de usuario
-                if (userTypeStr == 'female') {
-                  Modular.to.navigate('/female/contenido');
-                } else {
-                  Modular.to.navigate('/male/home');
-                }
+                // Usar addPostFrameCallback para navegar después del build
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  // Si el tipo es indefinido, mostrar pantalla de selección
+                  if (userTypeStr == null || userTypeStr == 'indefinido') {
+                    Modular.to.navigate('/auth/select-role');
+                    return;
+                  }
+
+                  // Redirigir según tipo de usuario
+                  if (userTypeStr == 'female') {
+                    Modular.to.navigate('/female/contenido');
+                  } else {
+                    Modular.to.navigate('/male/home');
+                  }
+                });
 
                 return const Scaffold(
                   backgroundColor: Color(0xFF4A148C),
@@ -107,16 +118,14 @@ class AuthWrapper extends StatelessWidget {
                 );
               }
 
-              // Usuario no existe en Firestore, ir a login
-              Modular.to.navigate('/auth/sign-in');
-              return const SizedBox.shrink();
+              // Usuario no existe en Firestore, mostrar login directamente
+              return const SignInScreen();
             },
           );
         }
 
-        // Si no hay usuario autenticado, redirigir al login
-        Modular.to.navigate('/auth/sign-in');
-        return const SizedBox.shrink();
+        // Si no hay usuario autenticado, mostrar login directamente
+        return const SignInScreen();
       },
     );
   }
