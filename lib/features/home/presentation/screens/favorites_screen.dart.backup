@@ -25,8 +25,20 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     {'name': 'Paula', 'image': 'assets/images/profiles/chica5.jpg'},
   ];
 
-  // Lista de contenido estático en grid
+  // Lista de contenido en grid
   final List<Map<String, dynamic>> _content = [
+    {
+      'type': 'EN VIVO',
+      'title': 'Cocina junto a mi',
+      'subtitle': 'Sala abierta',
+      'image': 'https://picsum.photos/400/600?random=1',
+    },
+    {
+      'type': 'EN VIVO',
+      'title': 'Hablemos un rato',
+      'subtitle': 'Conversación',
+      'image': 'https://picsum.photos/400/600?random=2',
+    },
     {
       'type': 'FOTO',
       'title': 'Fascinado por ell',
@@ -188,20 +200,11 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
 
           const SizedBox(height: 16),
 
-          // Grid de contenido con StreamBuilder
+          // Grid de contenido
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: _streamingService.getActiveStreamsStream(),
               builder: (context, snapshot) {
-                // Debug: Log del estado
-                print(
-                  '🔍 StreamBuilder - ConnectionState: ${snapshot.connectionState}',
-                );
-                print('🔍 StreamBuilder - HasData: ${snapshot.hasData}');
-                if (snapshot.hasError) {
-                  print('❌ StreamBuilder Error: ${snapshot.error}');
-                }
-
                 // Mostrar loading
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(
@@ -209,37 +212,10 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                   );
                 }
 
-                // Mostrar error si hay
-                if (snapshot.hasError) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(
-                          Icons.error_outline,
-                          size: 60,
-                          color: Colors.red,
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          'Error: ${snapshot.error}',
-                          style: const TextStyle(color: Colors.red),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  );
-                }
-
                 // Lista de lives activos
                 final activeStreams = snapshot.hasData
                     ? snapshot.data!.docs
                     : [];
-
-                print('📺 Lives activos encontrados: ${activeStreams.length}');
-                for (var doc in activeStreams) {
-                  print('  - ${doc.id}: ${doc.data()}');
-                }
 
                 // Combinar lives activos con contenido estático
                 final allContent = [
@@ -258,7 +234,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                       'viewerCount': data['viewerCount'] ?? 0,
                     };
                   }),
-                  ..._content,
+                  ..._content.where((item) => item['type'] != 'EN VIVO'),
                 ];
 
                 // Filtrar según el botón seleccionado
@@ -274,10 +250,6 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                       .where((item) => item['type'] != 'EN VIVO')
                       .toList();
                 }
-
-                print(
-                  '🎯 Contenido filtrado: ${filteredContent.length} items (filtro: $_selectedFilter)',
-                );
 
                 if (filteredContent.isEmpty) {
                   return Center(
@@ -299,16 +271,6 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                             color: Colors.grey[600],
                           ),
                         ),
-                        if (_selectedFilter == 0) ...[
-                          const SizedBox(height: 8),
-                          Text(
-                            'Espera a que tus favoritas inicien live',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey[500],
-                            ),
-                          ),
-                        ],
                       ],
                     ),
                   );

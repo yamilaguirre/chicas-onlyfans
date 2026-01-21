@@ -1,8 +1,9 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
-import 'live_page.dart';
+import 'liveLinea_page.dart';
 import 'package:permission_handler/permission_handler.dart';
+import '../../../../../shared/services/streaming_service.dart';
 
 class CameraPage extends StatefulWidget {
   const CameraPage({super.key});
@@ -256,13 +257,45 @@ class _CameraPageState extends State<CameraPage> {
                         ),
                       ),
                       child: TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const MyApp(),
-                            ),
-                          );
+                        onPressed: () async {
+                          // Verificar si ya hay un live activo
+                          final streamingService = StreamingService();
+                          final activeLive = await streamingService
+                              .getMyActiveLive();
+
+                          if (activeLive != null) {
+                            // Ya hay un live activo, redirigir al mismo
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                    'Ya tienes un live activo, reconectando...',
+                                  ),
+                                  duration: Duration(seconds: 2),
+                                  backgroundColor: Colors.orange,
+                                ),
+                              );
+
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => LiveScreen(
+                                    existingStreamId: activeLive['streamId'],
+                                  ),
+                                ),
+                              );
+                            }
+                          } else {
+                            // No hay live activo, crear uno nuevo
+                            if (context.mounted) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const LiveScreen(),
+                                ),
+                              );
+                            }
+                          }
                         },
                         child: const Text(
                           "Iniciar Live",

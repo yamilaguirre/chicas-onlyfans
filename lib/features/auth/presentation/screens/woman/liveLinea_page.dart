@@ -2,12 +2,17 @@ import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:apivideo_live_stream/apivideo_live_stream.dart';
 import 'package:chicas_app/features/auth/presentation/screens/woman/donadores_screen.dart';
-import 'package:chicas_app/features/auth/presentation/screens/woman/salaFinalizada.dart';
 import 'package:chicas_app/features/auth/presentation/screens/woman/contenido_screen.dart';
+import 'package:chicas_app/shared/services/streaming_service.dart';
+import 'package:chicas_app/core/config/aws_config.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LiveScreen extends StatefulWidget {
-  const LiveScreen({super.key});
+  final String? existingStreamId;
+
+  const LiveScreen({super.key, this.existingStreamId});
 
   @override
   State<LiveScreen> createState() => _LiveScreenState();
@@ -16,6 +21,14 @@ class LiveScreen extends StatefulWidget {
 class _LiveScreenState extends State<LiveScreen> {
   late CameraController _controller;
   bool camaraLista = false;
+
+  // AWS IVS Streaming
+  ApiVideoLiveStreamController? _liveStreamController;
+  final StreamingService _streamingService = StreamingService();
+  String? _streamId;
+  bool _isStreaming = false;
+  int _viewerCount = 0;
+  Timer? _viewerTimer;
 
   int botonSeleccionado = -1;
 
@@ -48,12 +61,26 @@ class _LiveScreenState extends State<LiveScreen> {
     iniciarCamara();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       iniciarMensajesAutomaticos();
+
+      // Si ya existe un streamId, no iniciar nuevo streaming
+      if (widget.existingStreamId != null) {
+        setState(() {
+          _streamId = widget.existingStreamId;
+          _isStreaming = true;
+        });
+        print('📺 Reconectando a stream existente: ${widget.existingStreamId}');
+        _iniciarStreaming();
+      } else {
+        _iniciarStreaming();
+      }
     });
   }
 
   @override
   void dispose() {
     _timer?.cancel();
+    _viewerTimer?.cancel();
+    _detenerStreaming();
     try {
       if (camaraLista && _controller.value.isInitialized) {
         _controller.dispose();
@@ -99,6 +126,145 @@ class _LiveScreenState extends State<LiveScreen> {
     }
   }
 
+  // ===== AWS IVS STREAMING =====
+  Future<void> _iniciarStreaming() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        debugPrint('❌ Usuario no autenticado');
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Debes estar autenticado para iniciar un live'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+        return;
+      }
+
+      debugPrint('✅ Usuario autenticado: ${user.uid}');
+
+      // Si no existe un streamId, crear sesión en Firestore
+      if (_streamId == null) {
+        final streamId = await _streamingService.startStreaming(
+          userId: user.uid,
+          userName: '@maria_gz', // TODO: Get from user profile
+          userAvatar: 'assets/model.jpg', // TODO: Get from user profile
+        );
+
+        debugPrint('✅ Stream registrado en Firestore: $streamId');
+
+        setState(() {
+          _streamId = streamId;
+        });
+      } else {
+        debugPrint('📺 Usando stream existente: $_streamId');
+      }
+
+      // Inicializar LiveStreamController
+      _liveStreamController = ApiVideoLiveStreamController(
+        initialAudioConfig: AudioConfig(),
+        initialVideoConfig: VideoConfig.withDefaultBitrate(
+          resolution: Resolution.RESOLUTION_720,
+        ),
+        onConnectionSuccess: () {
+          debugPrint('✅ Conectado a AWS IVS');
+          if (mounted) {
+            setState(() => _isStreaming = true);
+            _iniciarContadorViewers();
+          }
+        },
+        onConnectionFailed: (error) {
+          debugPrint('❌ Error de conexión: $error');
+          if (mounted) setState(() => _isStreaming = false);
+        },
+        onDisconnection: () {
+          debugPrint('🔌 Desconectado de AWS IVS');
+          if (mounted) setState(() => _isStreaming = false);
+        },
+      );
+
+      // Inicializar el controlador
+      await _liveStreamController!.initialize();
+
+      // Iniciar streaming a AWS IVS
+      await _liveStreamController!.startStreaming(
+        streamKey: AWSConfig.streamKey,
+        url: AWSConfig.ingestEndpoint,
+      );
+
+      debugPrint('🎥 Streaming iniciado a AWS IVS');
+    } on FirebaseException catch (e) {
+      debugPrint('❌ Firebase Error: ${e.code} - ${e.message}');
+      if (mounted) {
+        String errorMessage = 'Error al iniciar transmisión';
+
+        if (e.code == 'permission-denied') {
+          errorMessage =
+              'Error de permisos: Configura las reglas de Firestore.\nVe a SOLUCION_PERMISOS_FIRESTORE.md';
+        } else if (e.code == 'unavailable') {
+          errorMessage = 'Sin conexión a internet';
+        }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(errorMessage),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 5),
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint('❌ Error al iniciar streaming: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error al iniciar transmisión: $e'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _detenerStreaming() async {
+    try {
+      // Detener streaming
+      await _liveStreamController?.stopStreaming();
+      _liveStreamController?.dispose();
+      _liveStreamController = null;
+
+      // Actualizar Firestore
+      if (_streamId != null) {
+        await _streamingService.stopStreaming(_streamId!);
+      }
+
+      setState(() {
+        _isStreaming = false;
+        _streamId = null;
+        _viewerCount = 0;
+      });
+
+      debugPrint('🛑 Streaming detenido');
+    } catch (e) {
+      debugPrint('Error al detener streaming: $e');
+    }
+  }
+
+  void _iniciarContadorViewers() {
+    _viewerTimer?.cancel();
+    _viewerTimer = Timer.periodic(const Duration(seconds: 5), (_) async {
+      if (_streamId != null) {
+        final count = await _streamingService.getViewerCount(_streamId!);
+        if (mounted) {
+          setState(() => _viewerCount = count);
+        }
+      }
+    });
+  }
+
   // ===== MENSAJES AUTOMÁTICOS CON ANIMACIÓN =====
   void iniciarMensajesAutomaticos() {
     _timer = Timer.periodic(const Duration(seconds: 3), (_) {
@@ -126,11 +292,18 @@ class _LiveScreenState extends State<LiveScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          // ===== FONDO DE CÁMARA =====
+          // ===== FONDO DE CÁMARA / STREAMING =====
           Positioned.fill(
-            child: camaraLista
+            child: _liveStreamController != null && _isStreaming
+                ? ApiVideoCameraPreview(controller: _liveStreamController!)
+                : camaraLista
                 ? CameraPreview(_controller)
-                : Container(color: Colors.black),
+                : Container(
+                    color: Colors.black,
+                    child: const Center(
+                      child: CircularProgressIndicator(color: Colors.white),
+                    ),
+                  ),
           ),
 
           // ===== BARRA SUPERIOR =====
@@ -176,8 +349,8 @@ class _LiveScreenState extends State<LiveScreen> {
                       // --- TEXTO IZQUIERDO ---
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
+                        children: [
+                          const Text(
                             "@maria_gz",
                             style: TextStyle(
                               color: Colors.white,
@@ -185,12 +358,43 @@ class _LiveScreenState extends State<LiveScreen> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          Text(
-                            "Sala 4/6",
-                            style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 13,
-                            ),
+                          Row(
+                            children: [
+                              if (_isStreaming)
+                                Container(
+                                  width: 8,
+                                  height: 8,
+                                  margin: const EdgeInsets.only(right: 5),
+                                  decoration: const BoxDecoration(
+                                    color: Colors.red,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                              Text(
+                                _isStreaming ? "EN VIVO" : "Iniciando...",
+                                style: TextStyle(
+                                  color: _isStreaming
+                                      ? Colors.red
+                                      : Colors.white70,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              const Icon(
+                                Icons.remove_red_eye,
+                                color: Colors.white70,
+                                size: 14,
+                              ),
+                              const SizedBox(width: 3),
+                              Text(
+                                '$_viewerCount',
+                                style: const TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -391,13 +595,16 @@ class _LiveScreenState extends State<LiveScreen> {
             bottom: 8,
             right: 12,
             child: GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const CrearContenidoPage(),
-                  ), //o salaFinalizada
-                );
+              onTap: () async {
+                await _detenerStreaming();
+                if (mounted) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const CrearContenidoPage(),
+                    ),
+                  );
+                }
               },
               child: Container(
                 padding: const EdgeInsets.symmetric(
@@ -478,7 +685,6 @@ class _LiveScreenState extends State<LiveScreen> {
     required String nombre,
     required bool online,
     required String mensaje,
-    bool vip = false,
   }) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(16),

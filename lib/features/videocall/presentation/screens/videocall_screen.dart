@@ -1,12 +1,22 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:video_player/video_player.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../shared/services/streaming_service.dart';
 
 class VideoCallScreen extends StatefulWidget {
   final String name;
   final String avatar;
+  final String? streamId; // ID del stream activo
+  final String? playbackUrl; // URL HLS de AWS IVS
 
-  const VideoCallScreen({super.key, required this.name, required this.avatar});
+  const VideoCallScreen({
+    super.key,
+    required this.name,
+    required this.avatar,
+    this.streamId,
+    this.playbackUrl,
+  });
 
   @override
   State<VideoCallScreen> createState() => _VideoCallScreenState();
@@ -20,6 +30,12 @@ class _VideoCallScreenState extends State<VideoCallScreen>
   final bool _isCameraOff = false;
   late AnimationController _blinkController;
   late Animation<double> _blinkAnimation;
+
+  // Video Player
+  VideoPlayerController? _videoController;
+  bool _isVideoInitialized = false;
+  final StreamingService _streamingService = StreamingService();
+  Timer? _viewerUpdateTimer;
 
   @override
   void initState() {
@@ -41,12 +57,95 @@ class _VideoCallScreenState extends State<VideoCallScreen>
       begin: 0.3,
       end: 1.0,
     ).animate(_blinkController);
+
+    // Inicializar video player
+    _initializeVideoPlayer();
+
+    // Incrementar contador de viewers
+    if (widget.streamId != null) {
+      _streamingService.incrementViewerCount(widget.streamId!);
+      _startViewerUpdate();
+    }
+  }
+
+  void _initializeVideoPlayer() async {
+    if (widget.playbackUrl == null || widget.playbackUrl!.isEmpty) {
+      debugPrint('❌ No hay URL de reproducción');
+      return;
+    }
+
+    debugPrint('🎬 Inicializando video player con URL: ${widget.playbackUrl}');
+
+    try {
+      _videoController = VideoPlayerController.networkUrl(
+        Uri.parse(widget.playbackUrl!),
+      );
+
+      await _videoController!.initialize();
+
+      if (mounted) {
+        setState(() {
+          _isVideoInitialized = true;
+        });
+      }
+
+      // Configurar para loop y auto-play
+      _videoController!.setLooping(true);
+      await _videoController!.play();
+
+      debugPrint('✅ Video player inicializado y reproduciendo');
+
+      // Listener para errores
+      _videoController!.addListener(() {
+        if (_videoController!.value.hasError) {
+          debugPrint(
+            '❌ Error en video player: ${_videoController!.value.errorDescription}',
+          );
+        }
+      });
+    } catch (e) {
+      debugPrint('❌ Error al inicializar video: $e');
+
+      // Reintentar después de 3 segundos
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Conectando al stream... Esto puede tardar unos segundos',
+            ),
+            duration: Duration(seconds: 2),
+          ),
+        );
+
+        Future.delayed(const Duration(seconds: 3), () {
+          if (mounted) {
+            _initializeVideoPlayer();
+          }
+        });
+      }
+    }
+  }
+
+  void _startViewerUpdate() {
+    _viewerUpdateTimer = Timer.periodic(const Duration(seconds: 30), (_) {
+      if (widget.streamId != null) {
+        _streamingService.incrementViewerCount(widget.streamId!);
+      }
+    });
   }
 
   @override
   void dispose() {
     _timer.cancel();
     _blinkController.dispose();
+    _videoController?.dispose();
+    _viewerUpdateTimer?.cancel();
+
+    // Decrementar contador de viewers
+    if (widget.streamId != null) {
+      _streamingService.decrementViewerCount(widget.streamId!);
+    }
+
     super.dispose();
   }
 
@@ -61,26 +160,58 @@ class _VideoCallScreenState extends State<VideoCallScreen>
     return Scaffold(
       body: Stack(
         children: [
-          // Video principal (simulado con imagen)
+          // Video principal (AWS IVS HLS stream)
           Positioned.fill(
             child: Container(
-              color: Colors.grey[300],
-              child: Image.network(
-                widget.avatar,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    color: Colors.grey[800],
-                    child: const Center(
-                      child: Icon(
-                        Icons.person,
-                        size: 120,
-                        color: Colors.white54,
+              color: Colors.black,
+              child: _isVideoInitialized && _videoController != null
+                  ? FittedBox(
+                      fit: BoxFit.cover,
+                      child: SizedBox(
+                        width: _videoController!.value.size.width,
+                        height: _videoController!.value.size.height,
+                        child: VideoPlayer(_videoController!),
+                      ),
+                    )
+                  : Container(
+                      color: Colors.grey[900],
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const CircularProgressIndicator(
+                              color: AppColors.primary,
+                            ),
+                            const SizedBox(height: 20),
+                            const Text(
+                              'Conectando al stream...',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'AWS IVS puede tardar 5-10 segundos',
+                              style: TextStyle(
+                                color: Colors.white70,
+                                fontSize: 12,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              'Stream ID: ${widget.streamId?.substring(0, 8) ?? "N/A"}...',
+                              style: TextStyle(
+                                color: Colors.white38,
+                                fontSize: 10,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  );
-                },
-              ),
             ),
           ),
 
