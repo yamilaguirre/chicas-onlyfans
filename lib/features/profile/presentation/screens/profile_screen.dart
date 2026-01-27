@@ -1,10 +1,11 @@
 // filepath: d:\OnlyFansApp_Chasky\chicas-onlyfans\lib\features\profile\presentation\screens\profile_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../packages/presentation/screens/packages_screen.dart';
+import '../../../male/packages/screens/packages_screen.dart';
 import '../../../chat/presentation/screens/chats_screen.dart';
-import '../../../home/presentation/screens/favorites_screen.dart';
+import '../../../male/home/screens/favorites_screen.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 
 class ProfileScreen extends ConsumerWidget {
@@ -802,6 +803,9 @@ class ProfileScreen extends ConsumerWidget {
                           await ref
                               .read(authControllerProvider.notifier)
                               .logout();
+
+                          // Navegar a login
+                          Modular.to.navigate('/auth/sign-in');
                         }
                       },
                     ),

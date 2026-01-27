@@ -34,6 +34,13 @@ class AuthStateError extends AuthState {
   const AuthStateError(this.message);
 }
 
+// Estado cuando el usuario necesita completar su perfil
+class AuthStateNeedsProfileCompletion extends AuthState {
+  final User user;
+
+  const AuthStateNeedsProfileCompletion(this.user);
+}
+
 // Extension para mantener compatibilidad con la sintaxis anterior
 extension AuthStateFactories on AuthState {
   static AuthState initial() => const AuthStateInitial();

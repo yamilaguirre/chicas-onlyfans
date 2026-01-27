@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import '../theme/app_colors.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../auth/presentation/controllers/auth_controller.dart';
+import '../../../../core/theme/app_colors.dart';
 
 /// Layout persistente para el módulo Male (Suscriptores)
 /// Contiene el BottomNavigationBar que se mantiene cargado
 /// mientras se navega entre las diferentes pantallas del módulo
-class MaleLayout extends StatefulWidget {
+class MaleLayout extends ConsumerStatefulWidget {
   final Widget child;
 
   const MaleLayout({super.key, required this.child});
 
   @override
-  State<MaleLayout> createState() => _MaleLayoutState();
+  ConsumerState<MaleLayout> createState() => _MaleLayoutState();
 }
 
-class _MaleLayoutState extends State<MaleLayout> {
+class _MaleLayoutState extends ConsumerState<MaleLayout> {
   int _selectedIndex = 0;
 
   @override
@@ -66,7 +67,9 @@ class _MaleLayoutState extends State<MaleLayout> {
     );
 
     if (confirm == true) {
-      await FirebaseAuth.instance.signOut();
+      // Usar AuthController para cerrar sesión y limpiar cache
+      await ref.read(authControllerProvider.notifier).logout();
+
       if (mounted) {
         Modular.to.navigate('/auth/sign-in');
       }

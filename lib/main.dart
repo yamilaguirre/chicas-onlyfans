@@ -49,6 +49,34 @@ class MyApp extends StatelessWidget {
 class AuthWrapper extends StatelessWidget {
   const AuthWrapper({super.key});
 
+  // Buscar usuario por UID o email
+  Future<DocumentSnapshot?> _getUserDocument(User user) async {
+    // Primero intentar por UID
+    var userDoc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .get();
+
+    if (userDoc.exists) {
+      return userDoc;
+    }
+
+    // Si no existe por UID, buscar por email
+    if (user.email != null) {
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .where('email', isEqualTo: user.email)
+          .limit(1)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        return querySnapshot.docs.first;
+      }
+    }
+
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<User?>(
@@ -66,62 +94,10 @@ class AuthWrapper extends StatelessWidget {
           );
         }
 
-        // Si hay un usuario autenticado, verificar su tipo
+        // Si hay un usuario autenticado, mostrar RouterOutlet
+        // Los guards y el sign_in_screen se encargarán de la navegación
         if (snapshot.hasData && snapshot.data != null) {
-          return FutureBuilder<DocumentSnapshot>(
-            future: FirebaseFirestore.instance
-                .collection('users')
-                .doc(snapshot.data!.uid)
-                .get(),
-            builder: (context, userSnapshot) {
-              if (userSnapshot.connectionState == ConnectionState.waiting) {
-                return const Scaffold(
-                  backgroundColor: Color(0xFF4A148C),
-                  body: Center(
-                    child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    ),
-                  ),
-                );
-              }
-
-              if (userSnapshot.hasData && userSnapshot.data!.exists) {
-                final userData =
-                    userSnapshot.data!.data() as Map<String, dynamic>;
-                // Leer primero el campo 'type', si no existe usar 'userType'
-                final userTypeStr =
-                    (userData['type'] ?? userData['userType']) as String?;
-
-                // Usar addPostFrameCallback para navegar después del build
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  // Si el tipo es indefinido, mostrar pantalla de selección
-                  if (userTypeStr == null || userTypeStr == 'indefinido') {
-                    Modular.to.navigate('/auth/select-role');
-                    return;
-                  }
-
-                  // Redirigir según tipo de usuario
-                  if (userTypeStr == 'female') {
-                    Modular.to.navigate('/female/contenido');
-                  } else {
-                    Modular.to.navigate('/male/home');
-                  }
-                });
-
-                return const Scaffold(
-                  backgroundColor: Color(0xFF4A148C),
-                  body: Center(
-                    child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    ),
-                  ),
-                );
-              }
-
-              // Usuario no existe en Firestore, mostrar login directamente
-              return const SignInScreen();
-            },
-          );
+          return const RouterOutlet();
         }
 
         // Si no hay usuario autenticado, mostrar login directamente

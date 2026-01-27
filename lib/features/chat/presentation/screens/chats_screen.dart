@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import 'notifications_screen.dart';
 import 'chat_detail_screen.dart';
-import '../../../packages/presentation/screens/packages_screen.dart';
+import '../../../male/packages/screens/packages_screen.dart';
 import '../../../profile/presentation/screens/profile_screen.dart';
 
 class ChatsScreen extends StatefulWidget {

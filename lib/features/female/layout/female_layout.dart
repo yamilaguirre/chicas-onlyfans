@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../auth/presentation/controllers/auth_controller.dart';
 
 /// Layout persistente para el módulo Female (Creadoras)
 /// Contiene el BottomNavigationBar que se mantiene cargado
 /// mientras se navega entre las diferentes pantallas del módulo
-class FemaleLayout extends StatefulWidget {
+class FemaleLayout extends ConsumerStatefulWidget {
   final Widget child;
 
   const FemaleLayout({super.key, required this.child});
 
   @override
-  State<FemaleLayout> createState() => _FemaleLayoutState();
+  ConsumerState<FemaleLayout> createState() => _FemaleLayoutState();
 }
 
-class _FemaleLayoutState extends State<FemaleLayout> {
+class _FemaleLayoutState extends ConsumerState<FemaleLayout> {
   int _selectedIndex = 1; // Por defecto en "Crear"
 
   @override
@@ -65,7 +66,9 @@ class _FemaleLayoutState extends State<FemaleLayout> {
     );
 
     if (confirm == true) {
-      await FirebaseAuth.instance.signOut();
+      // Usar AuthController para cerrar sesión y limpiar cache
+      await ref.read(authControllerProvider.notifier).logout();
+
       if (mounted) {
         Modular.to.navigate('/auth/sign-in');
       }

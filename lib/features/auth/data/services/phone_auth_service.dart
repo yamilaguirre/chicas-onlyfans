@@ -168,11 +168,11 @@ class PhoneAuthService {
     required String userType,
   }) async {
     try {
-      await _firestore.collection('users').doc(userId).update({
+      await _firestore.collection('users').doc(userId).set({
         'type': userType,
         'userType': userType,
         'updatedAt': FieldValue.serverTimestamp(),
-      });
+      }, SetOptions(merge: true));
     } catch (e) {
       throw Exception('Error guardando tipo de usuario: $e');
     }

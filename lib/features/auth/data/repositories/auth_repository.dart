@@ -1,10 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import '../services/phone_auth_service.dart';
+import '../services/google_auth_service.dart';
 
 class AuthRepository {
   final PhoneAuthService _phoneAuthService;
+  final GoogleAuthService _googleAuthService;
 
-  AuthRepository(this._phoneAuthService);
+  AuthRepository(this._phoneAuthService, this._googleAuthService);
 
   Future<String> sendPhoneOTP(String phoneNumber) async {
     return await _phoneAuthService.sendOTP(phoneNumber);
@@ -50,6 +52,7 @@ class AuthRepository {
 
   Future<void> signOut() async {
     await _phoneAuthService.signOut();
+    await _googleAuthService.signOut();
   }
 
   Future<void> saveUserType({
@@ -57,5 +60,31 @@ class AuthRepository {
     required String userType,
   }) async {
     await _phoneAuthService.saveUserType(userId: userId, userType: userType);
+  }
+
+  // Google Sign In methods
+  Future<User?> signInWithGoogle() async {
+    return await _googleAuthService.signInWithGoogle();
+  }
+
+  /// Crea el documento del usuario en Firestore (para usuarios de Google)
+  Future<void> createGoogleUserDocument({
+    required String uid,
+    required String name,
+    required String username,
+    required String phone,
+    required DateTime birthDate,
+    required String userType,
+    String? photoUrl,
+  }) async {
+    await _googleAuthService.createUserDocument(
+      uid: uid,
+      name: name,
+      username: username,
+      phone: phone,
+      birthDate: birthDate,
+      userType: userType,
+      photoUrl: photoUrl,
+    );
   }
 }

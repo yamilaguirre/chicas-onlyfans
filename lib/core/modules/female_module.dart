@@ -1,8 +1,8 @@
 import 'package:flutter_modular/flutter_modular.dart';
-import '../../features/auth/presentation/screens/woman/contenido_screen.dart';
+import '../../features/female/content/screens/contenido_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../guards/auth_guard.dart';
-import '../layouts/female_layout.dart';
+import '../../features/female/layout/female_layout.dart';
 
 /// Módulo para creadoras de contenido/mujeres
 class FemaleModule extends Module {
@@ -34,6 +34,7 @@ class FemaleModule extends Module {
         //   child: (context) => const ChatScreenWoman(),
         // ),
       ],
+      transition: TransitionType.noTransition,
     );
 
     // Pantalla de donadores/top donadores (comentado hasta implementar)

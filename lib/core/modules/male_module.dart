@@ -1,12 +1,12 @@
 import 'package:flutter_modular/flutter_modular.dart';
-import '../../features/home/presentation/screens/home_screen.dart';
-import '../../features/home/presentation/screens/favorites_screen.dart';
+import '../../features/male/home/screens/home_screen.dart';
+import '../../features/male/home/screens/favorites_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../features/chat/presentation/screens/chats_screen.dart';
 import '../../features/chat/presentation/screens/chat_detail_screen.dart';
-import '../../features/packages/presentation/screens/packages_screen.dart';
+import '../../features/male/packages/screens/packages_screen.dart';
 import '../guards/auth_guard.dart';
-import '../layouts/male_layout.dart';
+import '../../features/male/layout/male_layout.dart';
 
 /// Módulo para usuarios hombres/suscriptores
 class MaleModule extends Module {
@@ -39,6 +39,7 @@ class MaleModule extends Module {
           child: (context) => const ProfileScreen(),
         ),
       ],
+      transition: TransitionType.noTransition,
     );
 
     // Rutas fuera del layout (sin bottom nav)
