@@ -1,23 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/constants/app_strings.dart';
-import '../../../../core/widgets/atoms/custom_back_button.dart';
-import '../../../../core/widgets/atoms/primary_button.dart';
-import '../../../../core/utils/validators.dart';
-import '../../../../core/enums/user_type.dart';
+import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/constants/app_strings.dart';
+import '../../../../../core/widgets/atoms/custom_back_button.dart';
+import '../../../../../core/widgets/atoms/primary_button.dart';
+import '../../../../../core/utils/validators.dart';
+import '../../../../../core/enums/user_type.dart';
 
 class BirthDateScreen extends StatefulWidget {
   final String phoneNumber;
   final String name;
   final UserType userType;
+  final String? email; // Email de Google (opcional)
 
   const BirthDateScreen({
     super.key,
     required this.phoneNumber,
     required this.name,
     this.userType = UserType.male,
+    this.email,
   });
 
   @override
@@ -80,13 +82,19 @@ class _BirthDateScreenState extends State<BirthDateScreen> {
         );
       }
 
+      // Convertir birthDate a String para poder pasarlo como argumento
+      final birthDateString = _selectedDate != null
+          ? '${_selectedDate!.day.toString().padLeft(2, '0')}/${_selectedDate!.month.toString().padLeft(2, '0')}/${_selectedDate!.year}'
+          : '';
+
       Modular.to.pushNamed(
         '/auth/profile-confirmation',
         arguments: {
           'phoneNumber': widget.phoneNumber,
           'name': widget.name,
-          'birthDate': _selectedDate!,
-          'userType': widget.userType,
+          'birthDate': birthDateString,
+          'userType': widget.userType == UserType.female ? 'female' : 'male',
+          'email': widget.email, // Pasar email a siguiente pantalla
         },
       );
     }

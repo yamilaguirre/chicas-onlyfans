@@ -2,21 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/constants/app_strings.dart';
-import '../../../../core/widgets/atoms/custom_back_button.dart';
-import '../../../../core/widgets/atoms/primary_button.dart';
-import '../../../../core/utils/validators.dart';
-import '../../../../core/enums/user_type.dart';
-import '../controllers/auth_controller.dart';
-import '../controllers/auth_state.dart';
+import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/constants/app_strings.dart';
+import '../../../../../core/widgets/atoms/custom_back_button.dart';
+import '../../../../../core/widgets/atoms/primary_button.dart';
+import '../../../../../core/utils/validators.dart';
+import '../../../../../core/enums/user_type.dart';
+import '../../controllers/auth_controller.dart';
 
 class VerificationCodeScreen extends ConsumerStatefulWidget {
   final String phoneNumber;
   final String verificationId;
   final UserType userType;
   final bool isLogin;
+  final String? email;
 
   const VerificationCodeScreen({
     super.key,
@@ -24,6 +23,7 @@ class VerificationCodeScreen extends ConsumerStatefulWidget {
     required this.verificationId,
     this.userType = UserType.male,
     this.isLogin = false,
+    this.email,
   });
 
   @override
@@ -63,6 +63,7 @@ class _VerificationCodeScreenState
       });
 
       try {
+        // Verificar el código OTP
         await ref
             .read(authControllerProvider.notifier)
             .verifyPhoneOTP(
@@ -73,99 +74,64 @@ class _VerificationCodeScreenState
 
         if (!mounted) return;
 
-        // Verificar si es login o registro
+        // Si es login, verificar si el usuario existe en Firestore
         if (widget.isLogin) {
-          // LOGIN: Navegar a select-role, el AuthWrapper/AuthGuard se encargarán del resto
-          final authState = ref.read(authControllerProvider);
+          final userId = ref
+              .read(authControllerProvider.notifier)
+              .getCurrentUserId();
 
-          if (authState is AuthStateAuthenticated) {
-            final userId = authState.user.id;
+          if (userId != null) {
+            final userExists = await ref
+                .read(authControllerProvider.notifier)
+                .checkUserExistsInFirestore(userId);
 
-            // Obtener datos del usuario de Firestore
-            final userDoc = await FirebaseFirestore.instance
-                .collection('users')
-                .doc(userId)
-                .get();
+            if (!userExists) {
+              // Usuario NO existe → Mostrar pantalla de error (Ops!)
+              print(
+                '🔵 Usuario no encontrado en login, redirigiendo a ErrorScreen',
+              );
 
-            if (!mounted) return;
+              if (!mounted) return;
 
-            if (userDoc.exists) {
-              // Usuario existe, obtener su tipo
-              final userData = userDoc.data()!;
-              final userTypeStr =
-                  (userData['type'] ?? userData['userType']) as String?;
-
-              // Si el tipo es indefinido o null, navegar a select-role
-              if (userTypeStr == null || userTypeStr == 'indefinido') {
-                Modular.to.navigate('/auth/select-role');
-              } else {
-                // Tipo ya definido, redirigir según tipo
-                final userType = userTypeStr == 'female'
-                    ? UserType.female
-                    : UserType.male;
-
-                if (userType == UserType.female) {
-                  Modular.to.navigate('/female/contenido');
-                } else {
-                  Modular.to.navigate('/male/home');
-                }
-              }
-            } else {
-              // Usuario no existe en Firestore, eliminar de Auth y mostrar error
               setState(() {
                 _isLoading = false;
               });
 
-              await ref.read(authControllerProvider.notifier).logout();
-
-              if (!mounted) return;
-
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text(
-                    'Usuario no encontrado. Por favor regístrate primero.',
-                  ),
-                  backgroundColor: AppColors.error,
-                  duration: Duration(seconds: 4),
-                ),
+              // Navegar a ErrorScreen con el número de teléfono
+              Modular.to.navigate(
+                '/auth/error',
+                arguments: {
+                  'phoneNumber': widget.phoneNumber,
+                  'fromPhoneLogin': true,
+                },
               );
-
-              // Volver a la pantalla de sign in
-              Navigator.of(context).popUntil((route) => route.isFirst);
+              return;
             }
           }
-        } else {
-          // REGISTRO: Guardar el tipo de usuario y continuar al flujo de crear perfil
-          final authState = ref.read(authControllerProvider);
-          if (authState is AuthStateAuthenticated) {
-            // Guardar el type del usuario
-            final userTypeStr = widget.userType == UserType.female
-                ? 'female'
-                : 'male';
-            await ref
-                .read(authControllerProvider.notifier)
-                .saveUserType(userTypeStr);
-          }
-
-          setState(() {
-            _isLoading = false;
-          });
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Código verificado correctamente'),
-              backgroundColor: AppColors.success,
-            ),
-          );
-
-          Modular.to.pushNamed(
-            '/auth/name',
-            arguments: {
-              'phoneNumber': widget.phoneNumber,
-              'userType': widget.userType,
-            },
-          );
         }
+
+        setState(() {
+          _isLoading = false;
+        });
+
+        // Código verificado correctamente
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('✅ Código verificado correctamente'),
+            backgroundColor: AppColors.success,
+            duration: Duration(seconds: 2),
+          ),
+        );
+
+        // Navegar a la siguiente pantalla
+        Modular.to.pushNamed(
+          '/auth/name',
+          arguments: {
+            'phoneNumber': widget.phoneNumber,
+            'userType': widget.userType == UserType.female ? 'female' : 'male',
+            'email': widget.email,
+          },
+        );
       } catch (e) {
         if (mounted) {
           setState(() {
@@ -174,8 +140,9 @@ class _VerificationCodeScreenState
 
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Error: ${e.toString()}'),
+              content: Text('❌ Código incorrecto: ${e.toString()}'),
               backgroundColor: AppColors.error,
+              duration: const Duration(seconds: 3),
             ),
           );
         }

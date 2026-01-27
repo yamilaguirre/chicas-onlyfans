@@ -1,12 +1,21 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/constants/app_strings.dart';
-import '../../../../core/widgets/atoms/custom_back_button.dart';
-import '../../../../core/widgets/atoms/primary_button.dart';
-import 'phone_number_screen.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/constants/app_strings.dart';
+import '../../../../../core/widgets/atoms/custom_back_button.dart';
+import '../../../../../core/widgets/atoms/primary_button.dart';
 
 class ErrorScreen extends StatelessWidget {
-  const ErrorScreen({super.key});
+  final String? phoneNumber;
+  final bool fromPhoneLogin;
+  final String? email;
+
+  const ErrorScreen({
+    super.key,
+    this.phoneNumber,
+    this.fromPhoneLogin = false,
+    this.email,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -54,12 +63,19 @@ class ErrorScreen extends StatelessWidget {
               PrimaryButton(
                 text: AppStrings.createNewAccount,
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const PhoneNumberScreen(),
-                    ),
-                  );
+                  // Si viene de phone login, ya tenemos el número, saltar a screen 03
+                  if (fromPhoneLogin && phoneNumber != null) {
+                    Modular.to.pushNamed(
+                      '/auth/name',
+                      arguments: {'phoneNumber': phoneNumber},
+                    );
+                  } else {
+                    // Si viene de Google login, empezar desde screen 01
+                    Modular.to.pushNamed(
+                      '/auth/phone',
+                      arguments: {'email': email},
+                    );
+                  }
                 },
               ),
 

@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/constants/app_strings.dart';
-import '../../../../core/widgets/atoms/custom_back_button.dart';
-import '../../../../core/widgets/atoms/primary_button.dart';
-import '../../../../core/widgets/molecules/phone_input_field.dart';
-import '../../../../core/enums/user_type.dart';
-import '../controllers/auth_controller.dart';
+import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/constants/app_strings.dart';
+import '../../../../../core/widgets/atoms/custom_back_button.dart';
+import '../../../../../core/widgets/atoms/primary_button.dart';
+import '../../../../../core/widgets/molecules/phone_input_field.dart';
+import '../../../../../core/enums/user_type.dart';
+import '../../controllers/auth_controller.dart';
 
 class PhoneNumberScreen extends ConsumerStatefulWidget {
   final UserType userType;
   final bool isLogin;
+  final String? email;
 
   const PhoneNumberScreen({
     super.key,
     this.userType = UserType.male,
     this.isLogin = false,
+    this.email,
   });
 
   @override
@@ -76,8 +78,11 @@ class _PhoneNumberScreenState extends ConsumerState<PhoneNumberScreen> {
             arguments: {
               'phoneNumber': phoneNumber,
               'verificationId': verificationId,
-              'userType': widget.userType,
+              'userType': widget.userType == UserType.female
+                  ? 'female'
+                  : 'male',
               'isLogin': widget.isLogin,
+              'email': widget.email,
             },
           );
         }

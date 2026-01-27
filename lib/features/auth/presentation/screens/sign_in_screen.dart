@@ -1,12 +1,58 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../controllers/auth_controller.dart';
+import '../controllers/auth_state.dart';
 
 class SignInScreen extends ConsumerWidget {
   const SignInScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final authState = ref.watch(authControllerProvider);
+
+    // Escuchar cambios de estado para navegación
+    ref.listen<AuthState>(authControllerProvider, (previous, next) async {
+      print('🟡 SignInScreen Listener - Estado: ${next.runtimeType}');
+
+      if (next is AuthStateAuthenticated) {
+        // Usuario autenticado - obtener userType del cache
+        print('🟢 Obteniendo userType del cache...');
+        final userType = await ref
+            .read(authControllerProvider.notifier)
+            .getUserType();
+
+        print('🟢 UserType del cache: $userType');
+
+        if (userType == 'female') {
+          print('🔵 Navegando a /female/contenido');
+          Modular.to.navigate('/female/contenido');
+        } else if (userType == 'male') {
+          print('🔵 Navegando a /male/home');
+          Modular.to.navigate('/male/home');
+        } else {
+          print('⚠️ UserType indefinido o null: $userType');
+        }
+      } else if (next is AuthStateNeedsProfileCompletion) {
+        // Usuario nuevo de Google → Mostrar pantalla de error (Ops!)
+        print(
+          '🔵 Usuario nuevo de Google detectado, redirigiendo a ErrorScreen',
+        );
+        Modular.to.navigate(
+          '/auth/error',
+          arguments: {'email': next.user.email},
+        );
+      } else if (next is AuthStateError) {
+        // Mostrar error
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(next.message), backgroundColor: Colors.red),
+          );
+        }
+      }
+    });
+
     return Scaffold(
       backgroundColor: const Color(0xFF4A148C),
       body: SafeArea(
@@ -31,45 +77,58 @@ class SignInScreen extends ConsumerWidget {
 
               const SizedBox(height: 60),
 
-              // Botón de Google
-              _SocialButton(
-                text: 'INICIAR SESIÓN CON GOOGLE',
-                icon: Icons.g_mobiledata,
-                backgroundColor: Colors.white,
-                textColor: Colors.black87,
-                onPressed: () {
-                  // TODO: Implementar Google Sign In
-                },
-              ),
+              // Estado de carga
+              if (authState is AuthStateLoading)
+                const Padding(
+                  padding: EdgeInsets.all(20.0),
+                  child: Center(
+                    child: CircularProgressIndicator(color: Colors.white),
+                  ),
+                )
+              else ...[
+                // Botón de Google
+                _SocialButton(
+                  text: 'INICIAR SESIÓN CON GOOGLE',
+                  icon: Icons.g_mobiledata,
+                  backgroundColor: Colors.white,
+                  textColor: Colors.black87,
+                  onPressed: () {
+                    print('🔵 BOTÓN DE GOOGLE PRESIONADO (SignInScreen)');
+                    ref
+                        .read(authControllerProvider.notifier)
+                        .signInWithGoogle();
+                  },
+                ),
 
-              const SizedBox(height: 16),
+                const SizedBox(height: 16),
 
-              // Botón de Apple
-              _SocialButton(
-                text: 'INICIAR SESIÓN CON APPLE',
-                icon: Icons.apple,
-                backgroundColor: Colors.white,
-                textColor: Colors.black87,
-                onPressed: () {
-                  // TODO: Implementar Apple Sign In
-                },
-              ),
+                // Botón de Apple
+                _SocialButton(
+                  text: 'INICIAR SESIÓN CON APPLE',
+                  icon: Icons.apple,
+                  backgroundColor: Colors.white,
+                  textColor: Colors.black87,
+                  onPressed: () {
+                    // TODO: Implementar Apple Sign In
+                  },
+                ),
 
-              const SizedBox(height: 16),
+                const SizedBox(height: 16),
 
-              // Botón de Número de Teléfono para Login
-              _SocialButton(
-                text: 'INICIAR SESIÓN',
-                icon: Icons.phone_android,
-                backgroundColor: Colors.white,
-                textColor: Colors.black87,
-                onPressed: () {
-                  Modular.to.pushNamed(
-                    '/auth/phone',
-                    arguments: {'isLogin': true},
-                  );
-                },
-              ),
+                // Botón de Número de Teléfono para Login
+                _SocialButton(
+                  text: 'INICIAR SESIÓN',
+                  icon: Icons.phone_android,
+                  backgroundColor: Colors.white,
+                  textColor: Colors.black87,
+                  onPressed: () {
+                    Modular.to.pushNamed(
+                      '/auth/phone',
+                      arguments: {'isLogin': true},
+                    );
+                  },
+                ),
+              ],
 
               const Spacer(),
 

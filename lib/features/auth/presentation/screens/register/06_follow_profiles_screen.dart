@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/constants/app_strings.dart';
-import '../../../../core/widgets/atoms/custom_back_button.dart';
-import '../../../../core/widgets/atoms/primary_button.dart';
-import '../../../../core/enums/user_type.dart';
-import '../controllers/auth_controller.dart';
+import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/constants/app_strings.dart';
+import '../../../../../core/widgets/atoms/custom_back_button.dart';
+import '../../../../../core/widgets/atoms/primary_button.dart';
+import '../../../../../core/enums/user_type.dart';
+import '../../controllers/auth_controller.dart';
 
 class FollowProfilesScreen extends ConsumerStatefulWidget {
   final String phoneNumber;
@@ -111,6 +111,11 @@ class _FollowProfilesScreenState extends ConsumerState<FollowProfilesScreen> {
         );
       }
 
+      // Usar el userType que viene de la pantalla 05
+      final userTypeString = widget.userType == UserType.female
+          ? 'female'
+          : 'male';
+
       // Guardar el perfil completo del usuario
       await ref
           .read(authControllerProvider.notifier)
@@ -121,21 +126,35 @@ class _FollowProfilesScreenState extends ConsumerState<FollowProfilesScreen> {
             email: widget.email,
           );
 
+      // Guardar el userType
+      await ref
+          .read(authControllerProvider.notifier)
+          .saveUserType(userTypeString);
+
       if (mounted) {
         // Mostrar mensaje de éxito
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('¡Registro completado! Ahora puedes iniciar sesión'),
+          SnackBar(
+            content: Text(
+              widget.userType == UserType.female
+                  ? '¡Bienvenida creadora! Ya puedes empezar a crear contenido'
+                  : '¡Registro completado! Ya puedes explorar contenido',
+            ),
             backgroundColor: AppColors.success,
-            duration: Duration(seconds: 3),
+            duration: const Duration(seconds: 2),
           ),
         );
 
-        // Cerrar sesión y redirigir al login
-        await ref.read(authControllerProvider.notifier).logout();
+        // Redirigir según el tipo de usuario
+        await Future.delayed(const Duration(milliseconds: 500));
 
-        // Navegar al login eliminando todo el historial
-        Modular.to.navigate('/auth/sign-in');
+        if (widget.userType == UserType.female) {
+          // Creador de contenido → Ir a pantalla de female
+          Modular.to.navigate('/female/contenido');
+        } else {
+          // Usuario regular → Ir a pantalla de male
+          Modular.to.navigate('/male/home');
+        }
       }
     } catch (e) {
       if (mounted) {

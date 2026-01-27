@@ -1,17 +1,20 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/widgets/atoms/custom_back_button.dart';
-import '../../../../core/widgets/atoms/primary_button.dart';
-import '../../../../core/enums/user_type.dart';
+import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/widgets/atoms/custom_back_button.dart';
+import '../../../../../core/widgets/atoms/primary_button.dart';
+import '../../../../../core/enums/user_type.dart';
+import '../../controllers/auth_controller.dart';
 
-class ProfileConfirmationScreen extends StatefulWidget {
+class ProfileConfirmationScreen extends ConsumerStatefulWidget {
   final String phoneNumber;
   final String name;
-  final DateTime birthDate;
+  final String birthDate; // Cambiar de DateTime a String
   final UserType userType;
+  final String? email; // Email de Google (opcional)
 
   const ProfileConfirmationScreen({
     super.key,
@@ -19,33 +22,36 @@ class ProfileConfirmationScreen extends StatefulWidget {
     required this.name,
     required this.birthDate,
     this.userType = UserType.male,
+    this.email,
   });
 
   @override
-  State<ProfileConfirmationScreen> createState() =>
+  ConsumerState<ProfileConfirmationScreen> createState() =>
       _ProfileConfirmationScreenState();
 }
 
-class _ProfileConfirmationScreenState extends State<ProfileConfirmationScreen> {
+class _ProfileConfirmationScreenState
+    extends ConsumerState<ProfileConfirmationScreen> {
   Uint8List? _profileImage;
   final ImagePicker _picker = ImagePicker();
   late TextEditingController _nameController;
   late TextEditingController _usernameController;
   late TextEditingController _birthDateController;
   late TextEditingController _emailController;
+  bool _isContentCreator = false; // Switch para creador de contenido
+  bool _isLoading = false; // Estado de carga
 
   @override
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.name);
-    _usernameController = TextEditingController(
-      text: 'anonimo${DateTime.now().millisecondsSinceEpoch % 1000}',
-    );
-    _birthDateController = TextEditingController(
-      text:
-          '${widget.birthDate.day.toString().padLeft(2, '0')}/${widget.birthDate.month.toString().padLeft(2, '0')}/${widget.birthDate.year}',
-    );
-    _emailController = TextEditingController();
+    // Dejar campo de username vacío
+    _usernameController = TextEditingController(text: '');
+    _birthDateController = TextEditingController(text: widget.birthDate);
+    // Usar email de Google si está disponible
+    _emailController = TextEditingController(text: widget.email ?? '');
+    // Inicializar según el userType actual
+    _isContentCreator = widget.userType == UserType.female;
   }
 
   @override
@@ -73,18 +79,81 @@ class _ProfileConfirmationScreenState extends State<ProfileConfirmationScreen> {
     }
   }
 
-  void _handleContinue() {
-    Modular.to.pushNamed(
-      '/auth/follow-profiles',
-      arguments: {
-        'phoneNumber': widget.phoneNumber,
-        'name': _nameController.text,
-        'username': _usernameController.text,
-        'birthDate': _birthDateController.text,
-        'email': _emailController.text.isEmpty ? null : _emailController.text,
-        'userType': widget.userType,
-      },
-    );
+  void _handleContinue() async {
+    if (_isLoading) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // Parsear la fecha de cumpleaños
+      final parts = _birthDateController.text.split('/');
+      DateTime birthDate = DateTime.now();
+      if (parts.length == 3) {
+        birthDate = DateTime(
+          int.parse(parts[2]), // año
+          int.parse(parts[1]), // mes
+          int.parse(parts[0]), // día
+        );
+      }
+
+      // Determinar userType según el switch
+      final userTypeString = _isContentCreator ? 'female' : 'male';
+
+      // Guardar el perfil completo del usuario
+      await ref
+          .read(authControllerProvider.notifier)
+          .updateProfile(
+            name: _nameController.text,
+            username: _usernameController.text,
+            birthDate: birthDate,
+            email: _emailController.text.isEmpty ? null : _emailController.text,
+          );
+
+      // Guardar el userType
+      await ref
+          .read(authControllerProvider.notifier)
+          .saveUserType(userTypeString);
+
+      if (mounted) {
+        // Mostrar mensaje de éxito
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              _isContentCreator
+                  ? '¡Bienvenida creadora! Ya puedes empezar a crear contenido'
+                  : '¡Registro completado! Ya puedes explorar contenido',
+            ),
+            backgroundColor: AppColors.success,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+
+        // Redirigir según el tipo de usuario
+        await Future.delayed(const Duration(milliseconds: 500));
+
+        if (_isContentCreator) {
+          Modular.to.navigate('/female/contenido');
+        } else {
+          Modular.to.navigate('/male/home');
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error al guardar perfil: ${e.toString()}'),
+            backgroundColor: AppColors.error,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -271,24 +340,51 @@ class _ProfileConfirmationScreenState extends State<ProfileConfirmationScreen> {
                 ),
                 const SizedBox(height: 12),
 
-                // Email - EDITABLE
+                // Email - NO EDITABLE si ya existe
                 TextFormField(
                   controller: _emailController,
+                  enabled: widget.email == null || widget.email!.isEmpty,
                   keyboardType: TextInputType.emailAddress,
-                  style: const TextStyle(fontSize: 16, color: Colors.black),
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: (widget.email != null && widget.email!.isNotEmpty)
+                        ? AppColors.textSecondary
+                        : Colors.black,
+                  ),
                   decoration: InputDecoration(
                     filled: true,
-                    fillColor: Colors.white,
+                    fillColor:
+                        (widget.email != null && widget.email!.isNotEmpty)
+                        ? const Color(0xFFF0F0F0)
+                        : Colors.white,
                     hintText: 'E-mail',
                     hintStyle: const TextStyle(color: Colors.grey),
-                    suffixIcon: const Icon(
+                    suffixIcon: Icon(
                       Icons.email_outlined,
-                      color: Colors.grey,
+                      color: (widget.email != null && widget.email!.isNotEmpty)
+                          ? AppColors.primary
+                          : Colors.grey,
                     ),
                     contentPadding: const EdgeInsets.all(18),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+                      borderSide: BorderSide(
+                        color:
+                            (widget.email != null && widget.email!.isNotEmpty)
+                            ? AppColors.primary
+                            : const Color(0xFFE0E0E0),
+                        width:
+                            (widget.email != null && widget.email!.isNotEmpty)
+                            ? 2
+                            : 1,
+                      ),
+                    ),
+                    disabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(
+                        color: AppColors.primary,
+                        width: 2,
+                      ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -301,64 +397,117 @@ class _ProfileConfirmationScreenState extends State<ProfileConfirmationScreen> {
                 ),
                 const SizedBox(height: 12),
 
-                _buildInfoField(
-                  label: widget.phoneNumber,
-                  value: widget.phoneNumber,
-                  icon: Icons.phone_outlined,
-                  prefix: '🇧🇴  ',
+                // Teléfono - NO EDITABLE, siempre remarqué
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 18,
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF0F0F0),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppColors.primary, width: 2),
+                  ),
+                  child: Row(
+                    children: [
+                      const Text('🇧🇴  ', style: TextStyle(fontSize: 16)),
+                      Expanded(
+                        child: Text(
+                          widget.phoneNumber,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: AppColors.textSecondary,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                      const Icon(
+                        Icons.phone_outlined,
+                        color: AppColors.primary,
+                        size: 22,
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 32),
+
+                // Switch para creador de contenido
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: _isContentCreator
+                          ? AppColors.primary
+                          : const Color(0xFFE0E0E0),
+                      width: _isContentCreator ? 2 : 1,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.video_camera_front_rounded,
+                        color: _isContentCreator
+                            ? AppColors.primary
+                            : AppColors.textSecondary,
+                        size: 28,
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '¿Eres creador de contenido?',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: _isContentCreator
+                                    ? AppColors.primary
+                                    : AppColors.textPrimary,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              _isContentCreator
+                                  ? 'Podrás publicar contenido exclusivo'
+                                  : 'Podrás ver y seguir creadores',
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Switch(
+                        value: _isContentCreator,
+                        onChanged: (value) {
+                          setState(() {
+                            _isContentCreator = value;
+                          });
+                        },
+                        activeColor: AppColors.primary,
+                      ),
+                    ],
+                  ),
                 ),
 
                 const SizedBox(height: 48),
 
                 // Botón continuar
-                PrimaryButton(text: 'CONTINUAR', onPressed: _handleContinue),
+                PrimaryButton(
+                  text: _isLoading ? 'Guardando...' : 'CONTINUAR',
+                  onPressed: _isLoading ? null : _handleContinue,
+                ),
 
                 const SizedBox(height: 48),
               ],
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildInfoField({
-    required String label,
-    required String value,
-    IconData? icon,
-    String? prefix,
-  }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF5F5F5),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          if (prefix != null)
-            Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: Text(
-                prefix,
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-            ),
-          Expanded(
-            child: Text(
-              value,
-              style: const TextStyle(
-                fontSize: 16,
-                color: AppColors.textSecondary,
-                fontWeight: FontWeight.normal,
-              ),
-            ),
-          ),
-          if (icon != null) Icon(icon, color: AppColors.textHint, size: 22),
-        ],
       ),
     );
   }
